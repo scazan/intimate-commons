@@ -2,10 +2,6 @@ import { Label, RadioGroup, RadioGroupItem, Input } from "@/components/base/ui";
 import { Choice } from "@/components";
 import { getQuestions } from "@/api";
 
-export function InputDemo() {
-  return;
-}
-
 export default async () => {
   const choices = await getQuestions();
 
