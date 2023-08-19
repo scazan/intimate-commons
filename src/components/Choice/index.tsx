@@ -6,7 +6,7 @@ export const Choice = (props: { label?: string; value: string }) => {
   return (
     <div className="flex items-center space-x-2">
       <RadioGroupItem value={value} id={value} />
-      <Label htmlFor="option-three">{label}</Label>
+      <Label htmlFor={value}>{label}</Label>
     </div>
   );
 };
