@@ -1,28 +1,31 @@
-import { Label } from "@/components/base/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/base/ui/radio-group";
+import { Label, RadioGroup, RadioGroupItem, Input } from "@/components/base/ui";
+import { Choice } from "@/components";
+import { getQuestions } from "@/api";
 
-export default function Home() {
+export function InputDemo() {
+  return;
+}
+
+export default async () => {
+  const choices = await getQuestions();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <RadioGroup defaultValue="option-one">
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="option-one" id="option-one" />
-          <Label htmlFor="option-one">a cruise to a tropical destination</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="option-two" id="option-two" />
-          <Label htmlFor="option-two">my dream house</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="option-three" id="option-three" />
-          <Label htmlFor="option-three">an on-call massage therapist</Label>
-        </div>
+        {choices.map((choice) => (
+          <Choice key={choice.id} value={choice.title} />
+        ))}
+
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="option-four" id="option-four" />
           <Label htmlFor="option-four">
-            fill in an exchange of your choosing
+            <Input
+              type="text"
+              placeholder="fill in an exchange of your choosing"
+            />
           </Label>
         </div>
+
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="option-five" id="option-five" />
           <Label htmlFor="option-five">i would never.</Label>
@@ -30,4 +33,4 @@ export default function Home() {
       </RadioGroup>
     </main>
   );
-}
+};
