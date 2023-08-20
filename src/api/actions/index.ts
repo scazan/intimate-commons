@@ -14,7 +14,7 @@ export const createUser = async (data: FormData) => {
   });
 
   cookies().set("userId", newUser.id);
-  cookies().set("name", newUser.name);
+  cookies().set("userName", newUser.name);
 
   return { id: newUser.id };
 };
