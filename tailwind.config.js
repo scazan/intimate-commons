@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require("tailwindcss/plugin");
+
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -16,6 +18,10 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-goshaSans)"],
+        serif: ["var(--font-editorialNew)"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -51,10 +57,16 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      boxShadow: {
+        default: "0px 0px 48px 0px rgba(59, 161, 204, 0.24)",
+      },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        DEFAULT: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        md: "var(--radius-md)",
+      },
+      opacity: {
+        80: 0.88,
       },
       keyframes: {
         "accordion-down": {
@@ -72,5 +84,47 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    plugin(function (helpers) {
+      // variants that help styling Radix-UI components
+      dataStateVariant("open", helpers);
+      dataStateVariant("closed", helpers);
+      dataStateVariant("on", helpers);
+      dataStateVariant("checked", helpers);
+      dataStateVariant("unchecked", helpers);
+    }),
+  ],
 };
+
+function dataStateVariant(
+  state,
+  {
+    addVariant, // for registering custom variants
+    e, // for manually escaping strings meant to be used in class names
+  },
+) {
+  addVariant(`data-state-${state}`, ({ modifySelectors, separator }) => {
+    modifySelectors(({ className }) => {
+      return `.${e(
+        `data-state-${state}${separator}${className}`,
+      )}[data-state='${state}']`;
+    });
+  });
+
+  addVariant(`group-data-state-${state}`, ({ modifySelectors, separator }) => {
+    modifySelectors(({ className }) => {
+      return `.group[data-state='${state}'] .${e(
+        `group-data-state-${state}${separator}${className}`,
+      )}`;
+    });
+  });
+
+  addVariant(`peer-data-state-${state}`, ({ modifySelectors, separator }) => {
+    modifySelectors(({ className }) => {
+      return `.peer[data-state='${state}'] ~ .${e(
+        `peer-data-state-${state}${separator}${className}`,
+      )}`;
+    });
+  });
+}

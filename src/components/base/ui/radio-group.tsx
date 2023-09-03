@@ -12,7 +12,10 @@ const RadioGroup = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Root
-      className={cn("grid gap-2", className)}
+      className={cn(
+        "flex flex-col gap-6 justify-center items-center w-full relative",
+        className,
+      )}
       {...props}
       ref={ref}
     />
@@ -28,17 +31,19 @@ const RadioGroupItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+        "absolute top-0 left-0 h-full w-full rounded-md border border-primary focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+        "data-state-checked:border-accent-foreground data-state-checked:bg-accent shadow",
         className,
+        "peer",
       )}
       {...props}
     >
-      <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <CheckIcon className="h-3.5 w-3.5 fill-primary" />
-      </RadioGroupPrimitive.Indicator>
+      <RadioGroupPrimitive.Indicator className="flex w-full"></RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );
 });
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
 export { RadioGroup, RadioGroupItem };
+
+//<CheckIcon className="h-12 w-full bg-accent fill-primary" />;
