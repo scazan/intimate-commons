@@ -4,17 +4,34 @@ import { useRouter } from "next/navigation";
 import { RadioGroup, Button } from "@/components/base/ui";
 import { Choice, Header2, Header3 } from "@/components";
 import { cn } from "@/lib/utils";
-import { Form } from "../base/ui/form";
+import { Form, FormControl, FormField, FormItem } from "../base/ui/form";
 import { useForm } from "react-hook-form";
+import { addChoice } from "@/api";
 
 export const QuestionForm = ({ choices, className }) => {
   const router = useRouter();
   const [step, setStep] = useState(0);
 
   const offset = step * 4;
+  const subject = choices[offset];
 
-  const handleNext = (e) => {
-    e.preventDefault();
+  const handleNext = async (values) => {
+    console.log("would trade", subject.id, "for", values.object);
+
+    const request = fetch("/api/v1/choices", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ subId: subject.id, objId: values.object }),
+    });
+
+    // const addedChoice = await addChoice({
+    // userId: 1,
+    // subId: subject.id,
+    // objId: values.object,
+    // });
+
     if (step === 3) {
       router.push("/results");
       return;
@@ -42,21 +59,38 @@ export const QuestionForm = ({ choices, className }) => {
     <>
       <Header2>QUESTION {step + 1} OF 5</Header2>
       <Header3>
-        Would you share your {choices[offset].title.toUpperCase()} in exchange
-        for…
+        Would you share your {subject.title.toUpperCase()} in exchange for…
       </Header3>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleNext)}
           className={cn(className, "flex flex-col justify-center items-center")}
         >
-          <RadioGroup defaultValue="question">
-            {choices.slice(offset + 1, offset + 3).map((choice) => (
-              <Choice key={choice.id} value={choice.title} />
-            ))}
+          <FormField
+            control={form.control}
+            name="object"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    {choices.slice(offset + 1, offset + 3).map((choice) => (
+                      <Choice
+                        key={choice.id}
+                        label={choice.title}
+                        value={choice.id}
+                      />
+                    ))}
 
-            <Choice key="never" value="I would never." />
-          </RadioGroup>
+                    <Choice key="never" value="I would never." />
+                  </RadioGroup>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
           <div
             className={cn(
               "flex justify-between items-center w-full py-7",
@@ -71,7 +105,7 @@ export const QuestionForm = ({ choices, className }) => {
             >
               Previous
             </Button>
-            <Button variant="large" type="button" onClick={handleNext}>
+            <Button variant="large" type="submit">
               Next
             </Button>
           </div>
