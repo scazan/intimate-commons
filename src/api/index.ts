@@ -3,6 +3,11 @@ import { cookies } from "next/headers";
 
 export const getQuestions = async () => {
   const items = await prisma.items.findMany({
+    where: {
+      NOT: {
+        id: "never",
+      },
+    },
     take: 20,
   });
 

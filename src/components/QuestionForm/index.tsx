@@ -1,12 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RadioGroup, Button } from "@/components/base/ui";
 import { Choice, Header2, Header3 } from "@/components";
 import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem } from "../base/ui/form";
 import { useForm } from "react-hook-form";
-import { addChoice } from "@/api";
 
 export const QuestionForm = ({ choices, className }) => {
   const router = useRouter();
@@ -16,21 +15,15 @@ export const QuestionForm = ({ choices, className }) => {
   const subject = choices[offset];
 
   const handleNext = async (values) => {
-    console.log("would trade", subject.id, "for", values.object);
-
-    const request = fetch("/api/v1/choices", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ subId: subject.id, objId: values.object }),
-    });
-
-    // const addedChoice = await addChoice({
-    // userId: 1,
-    // subId: subject.id,
-    // objId: values.object,
-    // });
+    if (values.object !== "skip") {
+      fetch("/api/v1/choices", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ subId: subject.id, objId: values.object }),
+      });
+    }
 
     if (step === 3) {
       router.push("/results");
@@ -39,6 +32,7 @@ export const QuestionForm = ({ choices, className }) => {
 
     setStep((step) => step + 1);
 
+    form.reset();
     return false;
   };
 
@@ -50,10 +44,21 @@ export const QuestionForm = ({ choices, className }) => {
 
     setStep((step) => step - 1);
 
+    form.reset();
     return false;
   };
 
-  const form = useForm<any>();
+  let randomNumber = Math.random();
+
+  useEffect(() => {
+    randomNumber = Math.random();
+  }, [step]);
+
+  const form = useForm<any>({
+    defaultValues: {
+      object: "skip",
+    },
+  });
 
   return (
     <>
@@ -84,7 +89,11 @@ export const QuestionForm = ({ choices, className }) => {
                       />
                     ))}
 
-                    <Choice key="never" value="I would never." />
+                    <Choice
+                      key={randomNumber}
+                      value="never"
+                      label="I would never."
+                    />
                   </RadioGroup>
                 </FormControl>
               </FormItem>
