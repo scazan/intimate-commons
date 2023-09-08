@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RadioGroup, Button } from "@/components/base/ui";
+import { RadioGroup, Button, Label, Input } from "@/components/base/ui";
 import { Choice, Header2, Header3 } from "@/components";
 import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem } from "../base/ui/form";
@@ -16,12 +16,23 @@ export const QuestionForm = ({ choices, className }) => {
 
   const handleNext = async (values) => {
     if (values.object !== "skip") {
+      let objId = values.object;
+      const isCustom = values.object === "custom";
+
+      if (isCustom) {
+        objId = values.customInput;
+      }
+
       fetch("/api/v1/choices", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ subId: subject.id, objId: values.object }),
+        body: JSON.stringify({
+          subId: subject.id,
+          objId,
+          isCustom,
+        }),
       });
     }
 
@@ -89,11 +100,25 @@ export const QuestionForm = ({ choices, className }) => {
                       />
                     ))}
 
-                    <Choice
-                      key={randomNumber}
-                      value="never"
-                      label="I would never."
-                    />
+                    <Choice value="custom" label="">
+                      <FormField
+                        control={form.control}
+                        name="customInput"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                variant="unstyled"
+                                placeholder="fill in an exchange of your choosing"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </Choice>
+                    <Choice value="never" label="I would never." />
                   </RadioGroup>
                 </FormControl>
               </FormItem>
@@ -125,15 +150,3 @@ export const QuestionForm = ({ choices, className }) => {
 };
 
 export default QuestionForm;
-
-/*
-* <div className="flex items-center space-x-2">
-          <RadioGroupItem value="custom" id="custom" />
-          <Label htmlFor="custom">
-            <Input
-              type="text"
-              placeholder="fill in an exchange of your choosing"
-            />
-          </Label>
-        </div>
-  */

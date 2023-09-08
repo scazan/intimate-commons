@@ -30,3 +30,15 @@ export const addChoice = async ({ subId, objId }) => {
 
   return choice;
 };
+
+export const addItem = async ({ title }) => {
+  // TODO: check for duplicates
+
+  const item = await prisma.items.create({
+    data: {
+      title,
+    },
+  });
+
+  return item;
+};
