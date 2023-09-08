@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { RadioGroup, Button, Label, Input } from "@/components/base/ui";
 import { Choice, Header2, Header3 } from "@/components";
@@ -44,6 +44,7 @@ export const QuestionForm = ({ choices, className }) => {
     setStep((step) => step + 1);
 
     form.reset();
+    form.setValue("customInput", "");
     return false;
   };
 

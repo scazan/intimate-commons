@@ -2,7 +2,12 @@
 import { Label, RadioGroupItem } from "../base/ui";
 import { FormControl, FormItem, FormLabel } from "../base/ui/form";
 
-export const Choice = (props: { label?: string; value: string }) => {
+interface IProps extends React.ComponentProps<"div"> {
+  label?: string;
+  value: string;
+}
+
+export const Choice = (props: IProps) => {
   const { label = props.value, value, children } = props;
 
   return (
