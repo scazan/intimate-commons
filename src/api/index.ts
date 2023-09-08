@@ -11,7 +11,13 @@ export const getQuestions = async () => {
     take: 20,
   });
 
-  return items;
+  const randomChoices = await prisma.$queryRaw`SELECT *
+FROM "Items"
+WHERE Id <> 'never'
+ORDER BY random()
+LIMIT 20;`;
+
+  return randomChoices;
 };
 
 // based in a semantic triple
