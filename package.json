@@ -9,6 +9,8 @@
     "db:push": "npx prisma db push && pnpm run db:generate",
     "db:generate": "npx prisma generate",
     "db:explore": "npx prisma studio",
+    "db:reset": "npx prisma migrate reset --skip-seed && npm run db:push && npm run db:seed",
+    "db:seed": "npx prisma db seed",
     "lint": "next lint"
   },
   "dependencies": {
@@ -39,5 +41,8 @@
   },
   "devDependencies": {
     "prettier": "3.0.2"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
