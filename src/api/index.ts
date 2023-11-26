@@ -23,20 +23,23 @@ export const getQuestions = async () => {
       userId,
     },
   });
-  return randomChoices;
+  return { choices: randomChoices, sessionId: newSession.id };
 };
 
 // based in a semantic triple
-export const addChoice = async ({ subId, objId }) => {
+export const addChoice = async ({ subId, objId, sessionId }) => {
   const { value: userId } = cookies().get("userId");
 
-  console.log(userId, "would trade", subId, "for", objId);
+  console.log(sessionId, "-", userId, "would trade", subId, "for", objId);
 
   const choice = await prisma.choices.create({
     data: {
-      userId,
-      subId,
-      objId,
+      user: { connect: { id: userId } },
+      sub: { connect: { id: subId } },
+      obj: { connect: { id: objId } },
+      session: {
+        connect: { id: sessionId },
+      },
     },
   });
 

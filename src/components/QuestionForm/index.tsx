@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem } from "../base/ui/form";
 import { useForm } from "react-hook-form";
 
-export const QuestionForm = ({ choices, className }) => {
+export const QuestionForm = ({ choices, sessionId, className }) => {
   const router = useRouter();
   const [step, setStep] = useState(0);
 
@@ -34,6 +34,7 @@ export const QuestionForm = ({ choices, className }) => {
           subId: subject.id,
           objId,
           isCustom,
+          sessionId,
         }),
       });
 
@@ -44,7 +45,13 @@ export const QuestionForm = ({ choices, className }) => {
     }
 
     if (step === 3) {
-      const choicesSearchParams = new URLSearchParams(choicesMade);
+      const serializableChoices = choicesMade.reduce((accum, choice, i) => {
+        accum[`o${i}`] = choice.objId;
+        accum[`s${i}`] = choice.subId;
+
+        return accum;
+      }, {});
+      const choicesSearchParams = new URLSearchParams(serializableChoices);
       router.push(`/results?${choicesSearchParams.toString()}`, {});
       return;
     }

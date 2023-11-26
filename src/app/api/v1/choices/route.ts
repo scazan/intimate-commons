@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 interface IChoicesBody {
   subId: string;
   objId: string;
+  sessionId: string;
   isCustom?: boolean;
 }
 
@@ -15,9 +16,17 @@ export async function POST(request: Request) {
   if (body.isCustom) {
     const newItem = await addItem({ title: body.objId });
 
-    choice = await addChoice({ subId: body.subId, objId: newItem.id });
+    choice = await addChoice({
+      sessionId: body.sessionId,
+      subId: body.subId,
+      objId: newItem.id,
+    });
   } else {
-    choice = await addChoice({ subId: body.subId, objId: body.objId });
+    choice = await addChoice({
+      sessionId: body.sessionId,
+      subId: body.subId,
+      objId: body.objId,
+    });
   }
 
   return new NextResponse(JSON.stringify(choice), {
