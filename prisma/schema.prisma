@@ -26,6 +26,7 @@ model Users {
   name          String
   email         String?
   choices       Choices[]
+  sessions      Sessions[]
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 }
@@ -41,5 +42,16 @@ model Choices {
   obj           Items   @relation("object", fields: [objId], references: [id])
   objId         String
 
+  session          Sessions @relation(fields: [sessionId], references: [id])
+  sessionId        String
+
+  created_at    DateTime @default(now())
+}
+
+model Sessions {
+  id            String  @id @default(cuid())
+  choices       Choices[]
+  user          Users @relation(fields: [userId], references: [id])
+  userId        String
   created_at    DateTime @default(now())
 }

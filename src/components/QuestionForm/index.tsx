@@ -13,6 +13,8 @@ export const QuestionForm = ({ choices, className }) => {
 
   const offset = step * 4;
   const subject = choices[offset];
+  console.log(choices);
+  const choicesMade = [];
 
   const handleNext = async (values) => {
     if (values.object !== "skip") {
@@ -34,10 +36,16 @@ export const QuestionForm = ({ choices, className }) => {
           isCustom,
         }),
       });
+
+      choicesMade.push({
+        subId: subject.id,
+        objId,
+      });
     }
 
     if (step === 3) {
-      router.push("/results");
+      const choicesSearchParams = new URLSearchParams(choicesMade);
+      router.push(`/results?${choicesSearchParams.toString()}`, {});
       return;
     }
 

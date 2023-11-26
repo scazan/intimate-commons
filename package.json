@@ -11,6 +11,7 @@
     "db:explore": "npx prisma studio",
     "db:reset": "npx prisma migrate reset --skip-seed && npm run db:push && npm run db:seed",
     "db:seed": "npx prisma db seed",
+    "db:clear": "pnpm db:push && pnpm db:seed",
     "lint": "next lint"
   },
   "dependencies": {

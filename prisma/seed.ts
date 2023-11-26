@@ -27,12 +27,23 @@ async function main() {
     prisma.users.findMany(),
   ]);
 
+  const session = await prisma.sessions.create({
+    data: {
+      user: {
+        connect: {
+          id: testUsers[0].id,
+        },
+      },
+    },
+  });
+
   // add random choices made for each user
   const newChoices = await Promise.all(
     testUsers.map((user) => {
       return prisma.choices.createMany({
         data: new Array(20).fill(null).map(() => ({
           userId: user.id,
+          sessionId: session.id,
           subId: items[randomIndex(items.length)].id,
           objId: items[randomIndex(items.length)].id,
         })),
