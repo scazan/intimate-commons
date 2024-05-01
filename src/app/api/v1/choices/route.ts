@@ -9,8 +9,6 @@ const inputSchema = z.object({
   isCustom: z.coerce.boolean(),
 });
 
-type IChoicesBody = z.infer<typeof inputSchema>;
-
 export async function POST(request: Request) {
   const jsonBody = await request.json();
 

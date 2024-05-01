@@ -1,9 +1,15 @@
+import "server-only";
 import { PrismaClient } from "@prisma/client";
 
-declare global {
-  var prisma: PrismaClient | undefined;
-}
+const createPrismaClient = () => {
+  return new PrismaClient({
+    log: ["query"],
+  });
+};
+const prisma = globalThis.prisma ?? createPrismaClient();
 
-const prisma = new PrismaClient();
+if (process.env.NODE_ENV === "development") {
+  globalThis.prisma = prisma;
+}
 
 export default prisma;
