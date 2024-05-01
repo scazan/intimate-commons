@@ -10,6 +10,7 @@ async function main() {
   const itemsPromise = prisma.items.createMany({
     data: things.map((thing) => ({
       title: thing,
+      isSubjectOnly: true,
     })),
   });
 

@@ -18,9 +18,15 @@ model Items {
   id            String  @id @default(cuid())
   title         String
   description   String?
+
+  isUserDefined Boolean @default(false)
+  isSubjectOnly Boolean @default(false)
+
   subs          Choices[] @relation("subject")
   objs          Choices[] @relation("object")
   created_at    DateTime @default(now())
+
+  @@index([isSubjectOnly])
 }
 
 model Choices {
@@ -38,6 +44,11 @@ model Choices {
   sessionId        String
 
   created_at    DateTime @default(now())
+
+  @@index([objId])
+  @@index([subId])
+  @@index([sessionId])
+  @@index([userId])
 }
 
 model Users {

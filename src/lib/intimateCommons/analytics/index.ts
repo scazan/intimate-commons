@@ -13,6 +13,7 @@ export const getAllGroups = async () => {
   // TODO: Need to pull this into SQL side code instead maybe
   const allItems = (
     await prisma.items.findMany({
+      relationLoadStrategy: "join",
       where: {
         id: { in: allItemsInResults.flat() },
       },
