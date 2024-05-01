@@ -5,5 +5,8 @@ export const Results = async ({ userId }) => {
     method: "GET",
   });
 
-  return <div>{JSON.stringify(results)}</div>;
+  const data = await results.json();
+  console.log("DATA", data);
+
+  return <div>{JSON.stringify(data)}</div>;
 };
