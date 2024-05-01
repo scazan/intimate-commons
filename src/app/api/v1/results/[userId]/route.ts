@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (_: NextRequest, { params }) => {
   const { userId } = params;
   const allResults = await prisma.choices.findMany({
+    relationLoadStrategy: "join",
     where: {
       userId: userId,
     },
@@ -12,9 +13,11 @@ export const GET = async (_: NextRequest, { params }) => {
       obj: true,
     },
   });
-  console.log("USERID", userId, allResults);
 
-  return new NextResponse(JSON.stringify(allResults), {
-    status: 200,
-  });
+  return NextResponse.json(allResults);
 };
+export type ResultsData = Awaited<ReturnType<typeof GET>> extends NextResponse<
+  infer T
+>
+  ? T
+  : never;
