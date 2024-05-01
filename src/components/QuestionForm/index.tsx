@@ -13,7 +13,6 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
 
   const offset = step * 4;
   const subject = choices[offset];
-  console.log(choices);
   const choicesMade = [];
 
   const handleNext = async (values) => {

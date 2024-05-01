@@ -2,9 +2,13 @@ import "server-only";
 import { PrismaClient } from "@prisma/client";
 
 const createPrismaClient = () => {
-  return new PrismaClient({
-    log: ["query"],
-  });
+  if (process.env.NODE_ENV === "development") {
+    return new PrismaClient({
+      log: ["query"],
+    });
+  }
+
+  return new PrismaClient();
 };
 const prisma = globalThis.prisma ?? createPrismaClient();
 
