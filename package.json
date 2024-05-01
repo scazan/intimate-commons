@@ -6,7 +6,7 @@
     "dev": "prisma generate && next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "db:push": "npx prisma db push && pnpm run db:generate",
+    "db:push": "npx prisma db push --force-reset && pnpm run db:generate",
     "db:generate": "npx prisma generate",
     "db:explore": "npx prisma studio",
     "db:reset": "npx prisma migrate reset --skip-seed && npm run db:push && npm run db:seed",
@@ -39,7 +39,8 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.6",
     "typescript": "5.1.6",
-    "zod": "^3.22.2"
+    "zod": "^3.22.2",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "prettier": "3.0.2"

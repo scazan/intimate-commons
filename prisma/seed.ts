@@ -40,12 +40,15 @@ async function main() {
   // add random choices made for each user
   const newChoices = await Promise.all(
     testUsers.map((user) => {
+      const subId = items[randomIndex(items.length)].id;
+      const objId = items[randomIndex(items.length)].id;
+
       return prisma.choices.createMany({
-        data: new Array(20).fill(null).map(() => ({
+        data: new Array(2).fill(null).map(() => ({
           userId: user.id,
           sessionId: session.id,
-          subId: items[randomIndex(items.length)].id,
-          objId: items[randomIndex(items.length)].id,
+          subId,
+          objId,
         })),
       });
     }),
