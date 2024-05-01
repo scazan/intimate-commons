@@ -27,6 +27,7 @@ export const getQuestions = async () => {
 };
 
 // based in a semantic triple
+// SUBJECT ---predicate: "would share in exchange for"---> OBJECT
 export const addChoice = async ({ subId, objId, sessionId }) => {
   const { value: userId } = cookies().get("userId");
 

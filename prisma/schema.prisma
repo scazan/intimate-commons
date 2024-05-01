@@ -3,7 +3,9 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
+
+  previewFeatures = ["relationJoins", "jsonProtocol", "postgresqlExtensions"]
+  relationMode = "foreignKeys"
 }
 
 datasource db {
@@ -21,16 +23,6 @@ model Items {
   created_at    DateTime @default(now())
 }
 
-model Users {
-  id            String  @id @default(cuid())
-  name          String
-  email         String?
-  choices       Choices[]
-  sessions      Sessions[]
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
-}
-
 model Choices {
   id            String  @id @default(cuid())
   user          Users @relation(fields: [userId], references: [id])
@@ -46,6 +38,16 @@ model Choices {
   sessionId        String
 
   created_at    DateTime @default(now())
+}
+
+model Users {
+  id            String  @id @default(cuid())
+  name          String
+  email         String?
+  choices       Choices[]
+  sessions      Sessions[]
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 }
 
 model Sessions {

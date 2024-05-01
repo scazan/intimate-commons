@@ -1,33 +1,37 @@
 import { addChoice, addItem } from "@/api";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
-interface IChoicesBody {
-  subId: string;
-  objId: string;
-  sessionId: string;
-  isCustom?: boolean;
-}
+const inputSchema = z.object({
+  subId: z.string(),
+  objId: z.string(),
+  sessionId: z.string(),
+  isCustom: z.coerce.boolean(),
+});
+
+type IChoicesBody = z.infer<typeof inputSchema>;
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  const jsonBody = await request.json();
 
-  console.log(body);
-  let choice;
-  if (body.isCustom) {
-    const newItem = await addItem({ title: body.objId });
+  const validated = inputSchema.safeParse(jsonBody);
+  const { success } = validated;
 
-    choice = await addChoice({
-      sessionId: body.sessionId,
-      subId: body.subId,
-      objId: newItem.id,
-    });
-  } else {
-    choice = await addChoice({
-      sessionId: body.sessionId,
-      subId: body.subId,
-      objId: body.objId,
+  if (!success) {
+    return new NextResponse(JSON.stringify({}), {
+      status: 400,
     });
   }
+
+  const { data: body } = validated;
+
+  const newItem = body.isCustom ? await addItem({ title: body.objId }) : null;
+
+  const choice = await addChoice({
+    sessionId: body.sessionId,
+    subId: body.subId,
+    ...(body.isCustom ? { objId: newItem.id } : { objId: body.objId }),
+  });
 
   return new NextResponse(JSON.stringify(choice), {
     status: 200,
