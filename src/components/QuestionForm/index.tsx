@@ -51,7 +51,10 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
         return accum;
       }, {});
       const choicesSearchParams = new URLSearchParams(serializableChoices);
-      router.push(`/results?${choicesSearchParams.toString()}`, {});
+      router.push(
+        `/results?sid=${sessionId}&${choicesSearchParams.toString()}`,
+        {},
+      );
       return;
     }
 

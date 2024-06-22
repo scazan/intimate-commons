@@ -5,45 +5,47 @@ generator client {
   provider = "prisma-client-js"
 
   previewFeatures = ["relationJoins", "jsonProtocol", "postgresqlExtensions"]
-  relationMode = "foreignKeys"
+  relationMode    = "foreignKeys"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL")
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL")
   shadowDatabaseUrl = env("VERCELPOSTGRES_URL_NON_POOLING") // used for migrations
 }
 
 model Items {
-  id            String  @id @default(cuid())
-  title         String
-  description   String?
+  id          String  @id @default(cuid())
+  title       String
+  description String?
 
   isUserDefined Boolean @default(false)
   isSubjectOnly Boolean @default(false)
 
-  subs          Choices[] @relation("subject")
-  objs          Choices[] @relation("object")
-  created_at    DateTime @default(now())
+  subs       Choices[] @relation("subject")
+  objs       Choices[] @relation("object")
+  created_at DateTime  @default(now())
 
+  @@index([id])
+  @@index([title])
   @@index([isSubjectOnly])
 }
 
 model Choices {
-  id            String  @id @default(cuid())
-  user          Users @relation(fields: [userId], references: [id])
-  userId        String
+  id     String @id @default(cuid())
+  user   Users  @relation(fields: [userId], references: [id])
+  userId String
 
-  sub           Items   @relation("subject", fields: [subId], references: [id])
-  subId         String
+  sub   Items  @relation("subject", fields: [subId], references: [id])
+  subId String
 
-  obj           Items   @relation("object", fields: [objId], references: [id])
-  objId         String
+  obj   Items  @relation("object", fields: [objId], references: [id])
+  objId String
 
-  session          Sessions @relation(fields: [sessionId], references: [id])
-  sessionId        String
+  session   Sessions @relation(fields: [sessionId], references: [id])
+  sessionId String
 
-  created_at    DateTime @default(now())
+  created_at DateTime @default(now())
 
   @@index([objId])
   @@index([subId])
@@ -52,19 +54,35 @@ model Choices {
 }
 
 model Users {
-  id            String  @id @default(cuid())
-  name          String
-  email         String?
-  choices       Choices[]
-  sessions      Sessions[]
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id         String     @id @default(cuid())
+  name       String
+  email      String?
+  choices    Choices[]
+  sessions   Sessions[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+
+  @@index([email])
 }
 
 model Sessions {
-  id            String  @id @default(cuid())
-  choices       Choices[]
-  user          Users @relation(fields: [userId], references: [id])
-  userId        String
-  created_at    DateTime @default(now())
+  id         String    @id @default(cuid())
+  choices    Choices[]
+  user       Users     @relation(fields: [userId], references: [id])
+  userId     String
+  created_at DateTime  @default(now())
+  Story      Story[]
+
+  @@index([userId])
+}
+
+model Story {
+  id         String    @id @default(cuid())
+  text       String
+  session    Sessions  @relation(fields: [sessionId], references: [id])
+  sessionId  String
+  created_at DateTime  @default(now())
+
+  @@index([id])
+  @@index([sessionId])
 }

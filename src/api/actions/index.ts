@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { getAllGroups } from "@/lib/intimateCommons";
+import { UserDetailRow, createStory } from "@/lib/intimateCommons/stories";
 
 export const createUser = async (data: FormData) => {
   "use server";
@@ -20,8 +21,8 @@ export const createUser = async (data: FormData) => {
   return { id: newUser.id };
 };
 
-export const getResults = async ({ userId }) => {
-  const userResultsDetails = await prisma.$queryRaw`SELECT 
+export const getResults = async ({ userId, sessionId }) => {
+  const userResultsDetails = (await prisma.$queryRaw`SELECT 
   c.id AS choice_id,
     c."userId",
     c."sessionId",
@@ -37,14 +38,18 @@ export const getResults = async ({ userId }) => {
   JOIN 
   public."Items" objItems ON c."objId" = objItems.id
   WHERE
-  "Users".id = ${userId};`;
+  "Users".id = ${userId};`) as Array<UserDetailRow>;
 
-  const choiceProses = userResultsDetails.map(
-    (choice: string) =>
-      `${choice.name} would share their ${choice.obj_title} in exchange for ${choice.sub_title}`,
-  );
+  const { story } = await createStory(userResultsDetails);
 
-  console.log("choiceProses", choiceProses);
+  const newStory = await prisma.story.create({
+    data: {
+      text: story,
+      sessionId: sessionId,
+    },
+  });
+
+  console.log("newStory", newStory);
 
   const [userResults, globalResults] = await Promise.all([
     prisma.choices.findMany({
@@ -62,5 +67,3 @@ export const getResults = async ({ userId }) => {
 
   return { user: userResults, global: globalResults };
 };
-
-// Given the facts about about this person, craft a short story in which the user is living together with multiple other people. The story should be banal and be a picture of everyday life together.
