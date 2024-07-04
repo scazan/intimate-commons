@@ -25,6 +25,30 @@ export const createUser = async (data: FormData) => {
   return { id: newUser.id };
 };
 
+const getComputedResults = (globalResults, userResults, userCount) => {
+  const computedGlobalResults = globalResults.map((choice) => ({
+    ...choice,
+    percentage: choice.count / userCount,
+  }));
+
+  const computedUserResults = userResults.map((choice) => {
+    const globalObj = computedGlobalResults.find(
+      (globalChoice) => globalChoice.obj.id === choice.obj.id,
+    );
+
+    console.log("globalObj", globalObj);
+    return {
+      ...choice,
+      percentage: globalObj.percentage,
+    };
+  });
+
+  return {
+    global: computedGlobalResults,
+    user: computedUserResults,
+  };
+};
+
 export const getResults = async ({ userId, sessionId }) => {
   const userResultsDetails = (await prisma.$queryRaw`SELECT 
   c.id AS choice_id,
@@ -44,30 +68,40 @@ export const getResults = async ({ userId, sessionId }) => {
   WHERE
   "Users".id = ${userId};`) as Array<UserDetailRow>;
 
-  const [userResults, globalResults, existingStory] = await Promise.all([
-    prisma.choices.findMany({
-      relationLoadStrategy: "join",
-      where: {
-        userId,
-      },
-      include: {
-        sub: true,
-        obj: true,
-      },
-    }),
-    getAllGroups(),
-    prisma.story.findFirst({
-      where: {
-        sessionId,
-      },
-    }),
-  ]);
+  const [userResults, globalResults, existingStory, userCount] =
+    await Promise.all([
+      prisma.choices.findMany({
+        relationLoadStrategy: "join",
+        where: {
+          userId,
+        },
+        include: {
+          sub: true,
+          obj: true,
+        },
+      }),
+      getAllGroups(),
+      prisma.story.findFirst({
+        where: {
+          sessionId,
+        },
+      }),
+
+      prisma.users.count(),
+    ]);
 
   if (existingStory) {
     console.log("already exists");
+    const { global, user } = getComputedResults(
+      globalResults,
+      userResults,
+      userCount,
+    );
+
     return {
-      user: userResults,
-      global: globalResults,
+      totalUsers: userCount,
+      user,
+      global,
       story: existingStory.text,
     };
   }
@@ -91,8 +125,17 @@ export const getResults = async ({ userId, sessionId }) => {
   // waitUntil(
   await generateStoryAudio(newStory);
   // );
+  const { global, user } = getComputedResults(
+    globalResults,
+    userResults,
+    userCount,
+  );
 
-  return { user: userResults, global: globalResults, story: newStory };
+  return {
+    user,
+    global,
+    story: newStory,
+  };
 };
 
 const generateStoryAudio = async (story: Story) => {

@@ -1,7 +1,7 @@
 "use client";
 import * as d3 from "d3";
 
-import { forwardRef, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export const ChoiceResults = ({ choices }) => {
   return (
@@ -14,10 +14,9 @@ export const ChoiceResults = ({ choices }) => {
 };
 
 export const ChoiceResult = ({ choice }) => {
-  const data = [
-    { label: "", value: 70 },
-    { label: "", value: 30 },
-  ];
+  const percentage = Math.floor(choice.percentage * 100);
+  const wouldData = [{ value: percentage }, { value: 100 - percentage }];
+  const wouldNotData = [{ value: 100 - percentage }, { value: percentage }];
 
   return (
     <div className="flex flex-col gap-3">
@@ -33,9 +32,9 @@ export const ChoiceResult = ({ choice }) => {
       </div>
 
       <div id="charts" className="flex flex-row gap-12">
-        <Chart data={data} label="Would do the same" />
-        <Chart data={data} label="Would exchange" />
-        <Chart data={data} label="Would not exchange" color="blue" />
+        <Chart data={wouldData} label="Would do the same" />
+        <Chart data={wouldData} label="Would exchange" />
+        <Chart data={wouldNotData} label="Would not exchange" color="blue" />
       </div>
     </div>
   );
@@ -86,19 +85,15 @@ const Chart = ({
             : `rgba(242, 61, 124, ${i ? 0.27 : 1})`;
         return value;
       });
-
-    arcs
-      .append("text")
-      .attr("transform", (d) => `translate(${arc.centroid(d)})`)
-      .attr("text-anchor", "middle")
-      .text((d) => d.data.label);
   }, [data]);
 
   return (
-    <div className="flex flex-col w-14 gap-2">
+    <div className="flex flex-col min-w-14 gap-2">
       <div className="flex flex-row items-center gap-2">
         <svg ref={chartRef}></svg>
-        <span className="font-sans font-extralight text-[18px]">4%</span>
+        <span className="font-sans font-extralight text-[18px]">
+          {data[0].value}%
+        </span>
       </div>
       <div className="flex flex-row text-[0.625rem] font-extralight uppercase">
         {label}

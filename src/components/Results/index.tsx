@@ -1,5 +1,5 @@
 import { Header2 } from "..";
-import { ChoiceResult, ChoiceResults } from "./ChoiceResult";
+import { ChoiceResults } from "./ChoiceResult";
 import { ResultsViz } from "./ResultsViz";
 
 export const Results = async ({ results }) => {
