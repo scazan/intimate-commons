@@ -1,7 +1,7 @@
 "use client";
 import * as d3 from "d3";
 
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 
 export const ChoiceResults = ({ choices }) => {
   return (
@@ -14,18 +14,49 @@ export const ChoiceResults = ({ choices }) => {
 };
 
 export const ChoiceResult = ({ choice }) => {
-  const chart1 = useRef();
   const data = [
-    { label: "A", value: 30 },
     { label: "", value: 70 },
+    { label: "", value: 30 },
   ];
 
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="text-[2rem] font-extralight font-serif">
+        I would share my{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.obj.title}
+        </span>{" "}
+        in exchange for{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.sub.title}
+        </span>
+      </div>
+
+      <div id="charts" className="flex flex-row gap-12">
+        <Chart data={data} label="Would do the same" />
+        <Chart data={data} label="Would exchange" />
+        <Chart data={data} label="Would not exchange" color="blue" />
+      </div>
+    </div>
+  );
+};
+
+const Chart = ({
+  data,
+  label,
+  color,
+}: {
+  data: any;
+  label: string;
+  color?: "pink" | "blue";
+}) => {
+  const chartRef = useRef();
+
   useEffect(() => {
-    const ref = chart1;
+    const ref = chartRef;
     const width = 18;
     const height = 18;
     const radius = Math.min(width, height) / 2;
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     const svg = d3
       .select(ref.current)
@@ -48,9 +79,12 @@ export const ChoiceResult = ({ choice }) => {
     arcs
       .append("path")
       .attr("d", arc)
-      .attr("fill", (d, i) => {
-        console.log("D", i);
-        return `rgba(242, 61, 124, ${i ? 0.27 : 1})`;
+      .attr("fill", (_, i) => {
+        const value =
+          color === "blue"
+            ? `hsla(198, 59%, 52%, ${i ? 0.27 : 1})`
+            : `rgba(242, 61, 124, ${i ? 0.27 : 1})`;
+        return value;
       });
 
     arcs
@@ -61,21 +95,13 @@ export const ChoiceResult = ({ choice }) => {
   }, [data]);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="text-[2rem] font-extralight font-serif">
-        I would share my{" "}
-        <span className="font-sans font-extralight uppercase">
-          {choice.obj.title}
-        </span>{" "}
-        in exchange for{" "}
-        <span className="font-sans font-extralight uppercase">
-          {choice.sub.title}
-        </span>
+    <div className="flex flex-col w-14 gap-2">
+      <div className="flex flex-row items-center gap-2">
+        <svg ref={chartRef}></svg>
+        <span className="font-sans font-extralight text-[18px]">4%</span>
       </div>
-      <div id="charts" className="flex flex-row">
-        <div>
-          <svg ref={chart1}></svg>
-        </div>
+      <div className="flex flex-row text-[0.625rem] font-extralight uppercase">
+        {label}
       </div>
     </div>
   );
