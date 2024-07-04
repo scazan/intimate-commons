@@ -76,13 +76,26 @@ model Sessions {
   @@index([userId])
 }
 
-model Story {
-  id         String    @id @default(cuid())
-  text       String
-  session    Sessions  @relation(fields: [sessionId], references: [id])
-  sessionId  String
-  created_at DateTime  @default(now())
+model Group {
+  id    String  @id @default(cuid())
+  title String?
+  Story Story[]
 
   @@index([id])
+}
+
+model Story {
+  id         String   @id @default(cuid())
+  text       String
+  session    Sessions @relation(fields: [sessionId], references: [id])
+  sessionId  String
+  created_at DateTime @default(now())
+  mediaID    String?
+  group      Group?   @relation(fields: [groupId], references: [id])
+  groupId    String?
+
+  @@index([id])
+  @@index([groupId])
+  @@index([mediaID])
   @@index([sessionId])
 }

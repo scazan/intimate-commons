@@ -25,3 +25,24 @@ export const getUserStory = async (choiceProses: string[]) => {
 
   return response.choices[0].message?.content;
 };
+
+export const generateAudio = async (text: string): Promise<Buffer> => {
+  const client = getAIClient();
+
+  const voices: Array<"shimmer" | "nova" | "onyx" | "echo"> = [
+    "shimmer",
+    "nova",
+    "onyx",
+    "echo",
+  ];
+  const randomIndex = Math.floor(Math.random() * voices.length);
+  const mp3 = await client.audio.speech.create({
+    model: "tts-1",
+    voice: voices[randomIndex],
+    input: text,
+  });
+
+  const buffer = Buffer.from(await mp3.arrayBuffer());
+
+  return buffer;
+};

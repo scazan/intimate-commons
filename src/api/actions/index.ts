@@ -1,7 +1,11 @@
+import { waitUntil } from "@vercel/functions";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { getAllGroups } from "@/lib/intimateCommons";
 import { UserDetailRow, createStory } from "@/lib/intimateCommons/stories";
+import { Story } from "@prisma/client";
+import { generateAudio } from "@/lib/ai/query";
+import { uploadBufferToStorage } from "@/lib/storage";
 
 export const createUser = async (data: FormData) => {
   "use server";
@@ -45,7 +49,11 @@ export const getResults = async ({ userId, sessionId }) => {
   const newStory = await prisma.story.create({
     data: {
       text: story,
-      sessionId: sessionId,
+      session: {
+        connect: {
+          id: sessionId,
+        },
+      },
     },
   });
 
@@ -65,5 +73,23 @@ export const getResults = async ({ userId, sessionId }) => {
     getAllGroups(),
   ]);
 
-  return { user: userResults, global: globalResults };
+  // fork off the audio generation
+  waitUntil(generateStoryAudio(newStory));
+
+  return { user: userResults, global: globalResults, story: newStory };
+};
+
+const generateStoryAudio = async (story: Story) => {
+  const text = story.text;
+  const audioBuffer = await generateAudio(text);
+
+  const result = await uploadBufferToStorage({
+    buffer: audioBuffer,
+    bucketName: "intimate-commons-prod",
+    key: `${story.id}.mp3`,
+  });
+
+  console.log("Audio was Uploaded", result);
+
+  return;
 };

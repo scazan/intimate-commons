@@ -1,5 +1,3 @@
-"use client";
-
 import { Header2 } from "..";
 
 export const Results = async ({ results }) => {
