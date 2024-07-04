@@ -44,6 +44,34 @@ export const getResults = async ({ userId, sessionId }) => {
   WHERE
   "Users".id = ${userId};`) as Array<UserDetailRow>;
 
+  const [userResults, globalResults, existingStory] = await Promise.all([
+    prisma.choices.findMany({
+      relationLoadStrategy: "join",
+      where: {
+        userId,
+      },
+      include: {
+        sub: true,
+        obj: true,
+      },
+    }),
+    getAllGroups(),
+    prisma.story.findFirst({
+      where: {
+        sessionId,
+      },
+    }),
+  ]);
+
+  if (existingStory) {
+    console.log("already exists");
+    return {
+      user: userResults,
+      global: globalResults,
+      story: existingStory.text,
+    };
+  }
+
   const { story } = await createStory(userResultsDetails);
 
   const newStory = await prisma.story.create({
@@ -58,20 +86,6 @@ export const getResults = async ({ userId, sessionId }) => {
   });
 
   console.log("newStory", newStory);
-
-  const [userResults, globalResults] = await Promise.all([
-    prisma.choices.findMany({
-      relationLoadStrategy: "join",
-      where: {
-        userId: userId,
-      },
-      include: {
-        sub: true,
-        obj: true,
-      },
-    }),
-    getAllGroups(),
-  ]);
 
   // fork off the audio generation
   // waitUntil(

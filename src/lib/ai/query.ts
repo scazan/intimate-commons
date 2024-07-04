@@ -57,4 +57,4 @@ export const generateElevenAudio = async (text: string): Promise<Buffer> => {
   return buffer;
 };
 
-export const generateAudio = generateElevenAudio;
+export const generateAudio = generateOpenAIAudio;
