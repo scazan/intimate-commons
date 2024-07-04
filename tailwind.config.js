@@ -18,9 +18,25 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
       fontFamily: {
         sans: ["var(--font-goshaSans)"],
-        serif: ["var(--font-editorialNew)"],
+        serif: [
+          "var(--font-editorialNew)",
+          {
+            weight: 200,
+          },
+        ],
+      },
+      text: {
+        big: {
+          fontSize: "2rem",
+          lineHeight: "2.6rem",
+        },
       },
       colors: {
         border: "hsl(var(--border))",
@@ -86,7 +102,7 @@ module.exports = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    plugin(function (helpers) {
+    plugin(function(helpers) {
       // variants that help styling Radix-UI components
       dataStateVariant("open", helpers);
       dataStateVariant("closed", helpers);

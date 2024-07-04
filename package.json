@@ -31,6 +31,7 @@
     "autoprefixer": "10.4.15",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "d3": "^7.9.0",
     "elevenlabs": "^0.8.2",
     "next": "13.4.16",
     "openai": "^4.52.0",
