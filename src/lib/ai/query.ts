@@ -1,4 +1,5 @@
 import { getAIClient } from "./client";
+import { getAudio } from "./elevenLabs";
 
 export const getUserStory = async (choiceProses: string[]) => {
   const client = getAIClient();
@@ -8,7 +9,7 @@ export const getUserStory = async (choiceProses: string[]) => {
     messages: [
       {
         role: "system",
-        content: `Given the facts about about this person, craft a short story in which the user is living together with multiple other people. The story should be banal and be a picture of everyday life together.`,
+        content: `Given the facts about about this person, craft a very short story in which the user is living together with multiple other people. The story should be banal and be a picture of everyday life together. Trading is not the main focus of the story. Limit the story to no more than a paragraph.`,
       },
       {
         role: "user",
@@ -26,7 +27,7 @@ export const getUserStory = async (choiceProses: string[]) => {
   return response.choices[0].message?.content;
 };
 
-export const generateAudio = async (text: string): Promise<Buffer> => {
+export const generateOpenAIAudio = async (text: string): Promise<Buffer> => {
   const client = getAIClient();
 
   const voices: Array<"shimmer" | "nova" | "onyx" | "echo"> = [
@@ -46,3 +47,14 @@ export const generateAudio = async (text: string): Promise<Buffer> => {
 
   return buffer;
 };
+
+export const generateElevenAudio = async (text: string): Promise<Buffer> => {
+  const buffer = await getAudio(text);
+
+  console.log("AUDIO", buffer);
+  // const buffer = Buffer.from(await mp3.arrayBuffer());
+
+  return buffer;
+};
+
+export const generateAudio = generateElevenAudio;

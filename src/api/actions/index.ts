@@ -74,7 +74,9 @@ export const getResults = async ({ userId, sessionId }) => {
   ]);
 
   // fork off the audio generation
-  waitUntil(generateStoryAudio(newStory));
+  // waitUntil(
+  await generateStoryAudio(newStory);
+  // );
 
   return { user: userResults, global: globalResults, story: newStory };
 };
@@ -89,7 +91,7 @@ const generateStoryAudio = async (story: Story) => {
     key: `${story.id}.mp3`,
   });
 
-  console.log("Audio was Uploaded", result);
+  console.log("Audio was Uploaded", `${story.id}.mp3`, result);
 
-  return;
+  return story.id;
 };
