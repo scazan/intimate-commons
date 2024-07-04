@@ -12,6 +12,8 @@
     "db:reset": "npx prisma migrate reset --skip-seed && npm run db:push && npm run db:seed",
     "db:seed": "npx prisma db seed",
     "db:clear": "pnpm db:push && pnpm db:seed",
+    "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "db:deploy": "dotenv -e .env.local -- prisma migrate deploy",
     "lint": "next lint"
   },
   "dependencies": {
@@ -32,7 +34,9 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "d3": "^7.9.0",
+    "dotenv": "^16.4.5",
     "elevenlabs": "^0.8.2",
+    "lucide-react": "^0.400.0",
     "next": "13.4.16",
     "openai": "^4.52.0",
     "postcss": "8.4.28",

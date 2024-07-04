@@ -49,10 +49,10 @@ const getCirclePackedData = (data: {
     .join("circle")
     .attr("fill", (d) => (d.children ? color(d.depth) : "white"))
     .attr("pointer-events", (d) => (!d.children ? "none" : null))
-    .on("mouseover", function() {
+    .on("mouseover", function () {
       d3.select(this).attr("stroke", "#000");
     })
-    .on("mouseout", function() {
+    .on("mouseout", function () {
       d3.select(this).attr("stroke", null);
     })
     .on(
@@ -109,15 +109,15 @@ const getCirclePackedData = (data: {
       });
 
     label
-      .filter(function(d) {
+      .filter(function (d) {
         return d.parent === focus || this.style.display === "inline";
       })
       .transition(transition)
       .style("fill-opacity", (d) => (d.parent === focus ? 1 : 0))
-      .on("start", function(d) {
+      .on("start", function (d) {
         if (d.parent === focus) this.style.display = "inline";
       })
-      .on("end", function(d) {
+      .on("end", function (d) {
         if (d.parent !== focus) this.style.display = "none";
       });
   }
@@ -128,7 +128,6 @@ const getCirclePackedData = (data: {
 export const ResultsViz = ({ data }: { data: ChoiceCount[] }) => {
   useEffect(() => {
     d3.select("#chart").select("svg").remove();
-    console.log("DATA", data);
 
     // append the svg object to the body of the page
     getCirclePackedData({

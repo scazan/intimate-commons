@@ -1,15 +1,17 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { RadioGroup, Button, Label, Input } from "@/components/base/ui";
+import { RadioGroup, Button, Input } from "@/components/base/ui";
 import { Choice, Header2, Header3 } from "@/components";
 import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem } from "../base/ui/form";
 import { useForm } from "react-hook-form";
+import { LoaderCircle } from "lucide-react";
 
 export const QuestionForm = ({ choices, sessionId, className }) => {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const offset = step * 4;
   const subject = choices[offset];
@@ -51,6 +53,8 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
         return accum;
       }, {});
       const choicesSearchParams = new URLSearchParams(serializableChoices);
+      setIsLoading(true);
+
       router.push(
         `/results?sid=${sessionId}&${choicesSearchParams.toString()}`,
         {},
@@ -163,6 +167,11 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
           </div>
         </form>
       </Form>
+      {isLoading && (
+        <div className="flex justify-center items-center fixed w-screen h-screen bg-white opacity-80">
+          <LoaderCircle className="w-20 h-20" />
+        </div>
+      )}
     </>
   );
 };

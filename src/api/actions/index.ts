@@ -32,6 +32,7 @@ const getComputedResults = (globalResults, userResults, userCount) => {
   }));
 
   const computedUserResults = userResults.map((choice) => {
+    // TODO: this is not right. percentages should be based on subject
     const globalObj = computedGlobalResults.find(
       (globalChoice) => globalChoice.obj.id === choice.obj.id,
     );
@@ -102,7 +103,8 @@ export const getResults = async ({ userId, sessionId }) => {
       totalUsers: userCount,
       user,
       global,
-      story: existingStory.text,
+      story: existingStory,
+      sessionId,
     };
   }
 
@@ -135,6 +137,7 @@ export const getResults = async ({ userId, sessionId }) => {
     user,
     global,
     story: newStory,
+    sessionId,
   };
 };
 
