@@ -10,7 +10,7 @@ export const useAudio = () => {
 
   useEffect(() => {
     bgAudio.current.src = "/IC-Underscore.mp3";
-    bgAudio.current.volume = 0.5;
+    bgAudio.current.volume = 1;
     bgAudio.current.oncanplaythrough = () => {
       bgAudio.current.play();
     };
@@ -32,7 +32,7 @@ export const useAudio = () => {
       audio.current.volume = 1;
 
       bgAudio.current.play();
-      bgAudio.current.volume = 0.5;
+      bgAudio.current.volume = 1;
     } else {
       audio.current.volume = 0;
       bgAudio.current.volume = 0;

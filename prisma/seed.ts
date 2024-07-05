@@ -55,6 +55,13 @@ async function main() {
     }),
   );
 
+  const neverItem = await prisma.items.create({
+    data: {
+      title: "never",
+      isSubjectOnly: false,
+    },
+  });
+
   console.log(newChoices);
 }
 main()
