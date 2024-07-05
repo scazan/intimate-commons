@@ -14,13 +14,10 @@ export const Results = async ({ results }) => {
       <ChoiceResults choices={results.user} />
 
       <Header2>Global</Header2>
-      <ResultsViz data={results.global} />
-      {results.global.map((choice) => (
-        <div>
-          {choice.count} people would share their {choice.obj.title} in exchange
-          for {choice.sub.title}
-        </div>
-      ))}
+
+      <ChoiceResults choices={results.global} global />
     </div>
   );
 };
+
+// <ResultsViz data={results.global} />

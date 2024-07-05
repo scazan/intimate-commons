@@ -169,7 +169,7 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
         </form>
       </Form>
       {isLoading && (
-        <div className="flex justify-center items-center fixed w-screen h-screen bg-white opacity-30 z-50">
+        <div className="flex justify-center items-center fixed top-0 left-0 w-screen h-screen bg-white opacity-30 z-50">
           <LoadingCircle className="w-20 h-20" />
         </div>
       )}
