@@ -2,6 +2,8 @@ import { SiteHeader } from "@/components";
 import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { LoadingCircle } from "@/components/LoadingCircle";
+import { AudioPlayer } from "@/components/AudioPlayer";
 
 const editorialNew = localFont({
   src: [
@@ -48,6 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${gosha.variable} ${editorialNew.variable} font-serif`}>
+        <AudioPlayer />
         <SiteHeader />
         {children}
       </body>

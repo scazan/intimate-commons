@@ -5,6 +5,7 @@ import { ResultsViz } from "./ResultsViz";
 
 export const Results = async ({ results }) => {
   const storyId = results.story.id;
+
   return (
     <div className="flex flex-col gap-12">
       <AudioPlayer

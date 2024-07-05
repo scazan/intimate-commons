@@ -1,9 +1,13 @@
-export const AudioPlayer = ({ src }: { src: string }) => {
-  return (
-    <div className="fixed bottom-0 right-0 w-full">
-      <audio controls autoPlay loop className="w-96">
-        <source src={src} />
-      </audio>
-    </div>
-  );
+"use client";
+import { useAudio } from "@/lib/providers/hooks/useAudio";
+import { useEffect } from "react";
+
+export const AudioPlayer = ({ src }: { src?: string }) => {
+  const { AudioToggle, setSrc } = useAudio();
+
+  useEffect(() => {
+    setSrc(src);
+  }, [src]);
+
+  return AudioToggle;
 };
