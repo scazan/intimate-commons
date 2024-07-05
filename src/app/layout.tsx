@@ -53,6 +53,7 @@ export default function RootLayout({
         <AudioPlayer />
         <SiteHeader />
         {children}
+        <div className="bottomGradient z-10"></div>
       </body>
     </html>
   );
