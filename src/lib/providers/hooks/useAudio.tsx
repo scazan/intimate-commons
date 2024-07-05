@@ -1,43 +1,51 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useAudio = () => {
   const [src, setSrc] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const audio = useRef(new Audio());
-  const bgAudio = useRef(new Audio());
+  const [audio, setAudio] = useState<HTMLAudioElement>();
+  const [bgAudio, setBgAudio] = useState<HTMLAudioElement>();
 
   useEffect(() => {
-    bgAudio.current.src = "/IC-Underscore.mp3";
-    bgAudio.current.volume = 1;
-    bgAudio.current.oncanplaythrough = () => {
-      bgAudio.current.play();
+    const bgAudio = new Audio();
+    setAudio(new Audio());
+    bgAudio.src = "/IC-Underscore.mp3";
+    bgAudio.volume = 1;
+    bgAudio.oncanplaythrough = () => {
+      bgAudio.play();
     };
+
+    setBgAudio(bgAudio);
   }, []);
 
   useEffect(() => {
     if (src) {
-      audio.current.src = src;
-      audio.current.volume = 1;
-      audio.current.oncanplaythrough = () => {
-        audio.current.play();
+      audio.src = src;
+      audio.volume = 1;
+      audio.oncanplaythrough = () => {
+        audio.play();
       };
     }
   }, [src]);
 
   useEffect(() => {
-    if (isPlaying) {
-      audio.current.play();
-      audio.current.volume = 1;
-
-      bgAudio.current.play();
-      bgAudio.current.volume = 1;
-    } else {
-      audio.current.volume = 0;
-      bgAudio.current.volume = 0;
+    if (!bgAudio) {
+      return;
     }
-  }, [isPlaying]);
+
+    if (isPlaying) {
+      audio.play();
+      audio.volume = 1;
+
+      bgAudio.play();
+      bgAudio.volume = 1;
+    } else {
+      audio.volume = 0;
+      bgAudio.volume = 0;
+    }
+  }, [isPlaying, audio]);
 
   const AudioToggle = (
     <div
@@ -117,3 +125,5 @@ export const useAudio = () => {
     setSrc,
   };
 };
+
+export const generateStaticParams = () => [];
