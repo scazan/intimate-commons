@@ -54,8 +54,9 @@ export const addItem = async ({ title }) => {
 
   const item = await prisma.items.create({
     data: {
-      title,
+      title: title.trim(),
       sentiment,
+      isUserDefined: true,
     },
   });
 
