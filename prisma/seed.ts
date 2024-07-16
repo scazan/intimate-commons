@@ -8,9 +8,10 @@ const randomIndex = (length) => Math.floor(Math.random() * (length - 1));
 async function main() {
   // create a bunch of random items from the seed data
   const itemsPromise = prisma.items.createMany({
-    data: things.map((thing) => ({
-      title: thing,
+    data: Object.entries(things).map(([title, sentiment]) => ({
+      title,
       isSubjectOnly: true,
+      sentiment,
     })),
   });
 
@@ -59,6 +60,7 @@ async function main() {
     data: {
       title: "never",
       isSubjectOnly: false,
+      sentiment: 0,
     },
   });
 

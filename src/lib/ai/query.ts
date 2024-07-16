@@ -1,6 +1,66 @@
 import { getAIClient } from "./client";
 import { getAudio } from "./elevenLabs";
 
+export const getItemSentiment = async (item: string) => {
+  const client = getAIClient();
+
+  const response = await client.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: `Given an item that one might have to share with someone else, choose a number between 1 and 5 indicating the level of intimacy associated with sharing the item. Do not say anything other than the number in response.
+
+        ###
+        Example:
+        Item: Spouse
+
+        5
+
+        ###
+        Example:
+        Item: table
+
+        1
+
+        ###
+        Example:
+        Item: toothbrush
+
+        4
+
+        `,
+      },
+      {
+        role: "user",
+        content: `Item: ${item}`,
+      },
+    ],
+    temperature: 0.7,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    stream: false,
+    n: 1,
+  });
+
+  const content = response.choices[0].message?.content;
+
+  const sentiment = parseInt(content, 10);
+
+  if (!isNaN(sentiment)) {
+    return sentiment;
+  }
+
+  for (let char in content.split("")) {
+    if (!isNaN(parseInt(char, 10))) {
+      return parseInt(char, 10);
+    }
+  }
+
+  return -1;
+};
+
 export const getUserStory = async (choiceProses: string[]) => {
   const client = getAIClient();
 

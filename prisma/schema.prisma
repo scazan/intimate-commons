@@ -21,6 +21,7 @@ model Items {
 
   isUserDefined Boolean @default(false)
   isSubjectOnly Boolean @default(false)
+  sentiment Int
 
   subs       Choices[] @relation("subject")
   objs       Choices[] @relation("object")

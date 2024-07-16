@@ -1,16 +1,9 @@
+import { getItemSentiment } from "@/lib/ai/query";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 
 export const getQuestions = async () => {
   const { value: userId } = cookies().get("userId");
-  // const items = await prisma.items.findMany({
-  // where: {
-  // NOT: {
-  // id: "never",
-  // },
-  // },
-  // take: 20,
-  // });
 
   const randomChoices = await prisma.$queryRaw`SELECT *
     FROM "Items"
@@ -23,6 +16,7 @@ export const getQuestions = async () => {
       userId,
     },
   });
+
   return { choices: randomChoices, sessionId: newSession.id };
 };
 
@@ -48,11 +42,20 @@ export const addChoice = async ({ subId, objId, sessionId }) => {
 };
 
 export const addItem = async ({ title }) => {
-  // TODO: check for duplicates
+  // check for duplicates
+  const existingRecord = await prisma.items.findFirst({ where: { title } });
+
+  if (existingRecord) {
+    return existingRecord;
+  }
+
+  // calculate sentiment
+  const sentiment = await getItemSentiment(title);
 
   const item = await prisma.items.create({
     data: {
       title,
+      sentiment,
     },
   });
 
