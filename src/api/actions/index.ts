@@ -1,3 +1,4 @@
+"use server";
 import prisma from "@/lib/prisma";
 import { getAllGroups } from "@/lib/intimateCommons";
 import { UserDetailRow, createStory } from "@/lib/intimateCommons/stories";
@@ -51,7 +52,6 @@ const getComputedResults = (globalResults, userResults, userCount) => {
       (globalChoice) => globalChoice.obj.id === choice.obj.id,
     );
 
-    console.log("globalObj", globalObj);
     return {
       ...choice,
       percentage: globalObj.percentage,

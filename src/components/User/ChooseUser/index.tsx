@@ -1,23 +1,33 @@
-import React from "react";
+"use client";
+import React, { useTransition } from "react";
 import { Button } from "@/components/base/ui";
-import { cookies } from "next/headers";
 import { CreateUser } from "..";
 import { verifyUserAndNavigate } from "@/api/actions";
 import { cn } from "@/lib/utils";
+import { LoadingCircle } from "@/components/LoadingCircle";
 
-export const ChooseUser = ({ className }) => {
-  const userId = cookies().get("userId");
-  const userName = cookies().get("userName");
+export const ChooseUser = ({ className, userId, userName }) => {
+  const [isTransitioning, startTransition] = useTransition();
 
-  return userId && userName?.value ? (
-    <form action={verifyUserAndNavigate}>
-      <Button
-        className={cn("uppercase", className)}
-        variant="large"
-        type="submit"
-      >
-        Begin the experience
-      </Button>
+  const start = async () => {
+    startTransition(async () => {
+      await verifyUserAndNavigate();
+    });
+  };
+
+  return userId && userName ? (
+    <form action={start}>
+      {isTransitioning ? (
+        <LoadingCircle className="w-12 h-12" />
+      ) : (
+        <Button
+          className={cn("uppercase", className)}
+          variant="large"
+          type="submit"
+        >
+          Begin the experience
+        </Button>
+      )}
     </form>
   ) : (
     <CreateUser />

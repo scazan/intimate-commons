@@ -1,6 +1,10 @@
 import { ChooseUser } from "@/components/User";
+import { cookies } from "next/headers";
 
 export default async () => {
+  const userId = cookies().get("userId");
+  const userName = cookies().get("userName");
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-4 font-extralight font-serif text-[2rem] leading-[2.575rem] pb-32">
       <div className="flex flex-col gap-8">
@@ -25,7 +29,11 @@ export default async () => {
         </p>
       </div>
       <div className="fixed flex items-center justify-center bottom-8 right-0 font-sans text-base font-extralight w-full">
-        <ChooseUser className="text-center bg-background/80" />
+        <ChooseUser
+          userId={userId}
+          userName={userName}
+          className="text-center bg-background/80"
+        />
       </div>
     </main>
   );
