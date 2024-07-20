@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (_: NextRequest, { params }) => {
   const { userId, group } = params;
 
-  console.log("HERE", userId, group);
   const userResults = await prisma.$queryRaw`SELECT 
   c.id AS choice_id,
     c."userId",

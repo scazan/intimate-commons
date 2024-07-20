@@ -113,9 +113,7 @@ export const getResults = async ({ userId, sessionId, groupId }) => {
       prisma.user.count(),
     ]);
 
-  console.log("globalResults", globalResults);
   if (existingStory) {
-    console.log("already exists");
     const { global, user } = getComputedResults(
       globalResults,
       userResults,

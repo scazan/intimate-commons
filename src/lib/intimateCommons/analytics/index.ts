@@ -34,8 +34,6 @@ export const getAllGroups = async (groupId: string) => {
     GROUP BY "Choice"."subId", "Choice"."objId";
   `) as Array<{ objId: string; subId: string; count: number }>;
 
-  console.log(">>>>>>>>>", typeof allGroups[0].count);
-
   const allItemsInResults = allGroups.map((item) => [item.objId, item.subId]);
 
   // TODO: Need to pull this into SQL side code instead maybe
@@ -50,8 +48,6 @@ export const getAllGroups = async (groupId: string) => {
     accum[item.id] = item;
     return accum;
   }, {});
-
-  console.log("ALL ITEMS", allItems);
 
   const resolved = allGroups.map((group) => ({
     count: parseInt(group.count.toString(), 10),
