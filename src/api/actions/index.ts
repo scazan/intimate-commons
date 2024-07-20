@@ -56,13 +56,13 @@ const getComputedResults = (globalResults, userResults, userCount) => {
 
   const computedUserResults = userResults.map((choice) => {
     // TODO: this is not right. percentages should be based on subject
-    const globalObj = computedGlobalResults.find(
-      (globalChoice) => globalChoice.obj.id === choice.obj.id,
-    );
+    const globalObj = computedGlobalResults.find((globalChoice) => {
+      return globalChoice.obj.id === choice.obj.id;
+    });
 
     return {
       ...choice,
-      percentage: globalObj.percentage,
+      percentage: globalObj?.percentage ?? 0,
     };
   });
 

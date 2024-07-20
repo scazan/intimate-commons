@@ -25,13 +25,14 @@ export const getAllGroups = async (groupId: string) => {
   const allGroups = (await prisma.$queryRaw`SELECT
     "Choice"."subId",
     "Choice"."objId",
-    count("Choice"."subId")
+    count("Choice"."objId")
 
     FROM "Choice"
     JOIN "Session" ON "Choice"."sessionId" = "Session".id
+
     WHERE "Session"."groupId" = ${groupId}
 
-    GROUP BY "Choice"."subId", "Choice"."objId";
+    GROUP BY "Choice"."objId", "Choice"."subId"
   `) as Array<{ objId: string; subId: string; count: number }>;
 
   const allItemsInResults = allGroups.map((item) => [item.objId, item.subId]);
