@@ -2,8 +2,8 @@
 import prisma from "@/lib/prisma";
 import { getAllGroups } from "@/lib/intimateCommons";
 import { UserDetailRow, createStory } from "@/lib/intimateCommons/stories";
-import { Story } from "@prisma/client";
-import { generateAudio } from "@/lib/ai/query";
+import { Choice, Item, Story } from "@prisma/client";
+import { generateAudio, getNewItems } from "@/lib/ai/query";
 import { uploadBufferToStorage } from "@/lib/storage";
 import { createUser as icCreateUser } from "@/lib/intimateCommons/services/user";
 import { cookies } from "next/headers";
@@ -148,6 +148,8 @@ export const getResults = async ({ userId, sessionId, groupId }) => {
   // waitUntil(
   await generateStoryAudio(newStory);
   // );
+  await generateNewItemsForGroup(groupId, userResults);
+
   const { global, user } = getComputedResults(
     globalResults,
     userResults,
@@ -175,4 +177,31 @@ const generateStoryAudio = async (story: Story) => {
   console.log("Audio was Uploaded", `${story.id}.mp3`, result);
 
   return story.id;
+};
+
+export type ChoiceResults = Array<Choice & { sub: Item; obj: Item }>;
+
+const generateNewItemsForGroup = async (
+  groupId: string,
+  userResults: ChoiceResults,
+) => {
+  const newItems = await getNewItems(userResults);
+
+  await Promise.all(
+    newItems.map(({ title, sentiment }) =>
+      prisma.item.upsert({
+        where: {
+          title_groupId: { title, groupId },
+        },
+        update: {
+          sentiment,
+        },
+        create: {
+          title,
+          sentiment,
+          groupId,
+        },
+      }),
+    ),
+  );
 };

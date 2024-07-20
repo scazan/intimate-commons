@@ -78,9 +78,11 @@ export const addChoice = async ({ subId, objId, sessionId }) => {
   return choice;
 };
 
-export const addItem = async ({ title }) => {
+export const addItem = async ({ title, groupId }) => {
   // check for duplicates
-  const existingRecord = await prisma.item.findFirst({ where: { title } });
+  const existingRecord = await prisma.item.findFirst({
+    where: { title, groupId },
+  });
 
   if (existingRecord) {
     return existingRecord;
@@ -94,6 +96,7 @@ export const addItem = async ({ title }) => {
       title: title.trim(),
       sentiment,
       isUserDefined: true,
+      groupId,
     },
   });
 

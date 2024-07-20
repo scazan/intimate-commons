@@ -1,4 +1,5 @@
 import { addChoice, addItem } from "@/api";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -14,6 +15,7 @@ export const GET = () => {
 };
 
 export async function POST(request: Request) {
+  const { value: groupId } = cookies().get("groupId") || {};
   const jsonBody = await request.json();
 
   const validated = inputSchema.safeParse(jsonBody);
@@ -27,7 +29,9 @@ export async function POST(request: Request) {
 
   const { data: body } = validated;
 
-  const newItem = body.isCustom ? await addItem({ title: body.objId }) : null;
+  const newItem = body.isCustom
+    ? await addItem({ title: body.objId, groupId })
+    : null;
 
   const choice = await addChoice({
     sessionId: body.sessionId,

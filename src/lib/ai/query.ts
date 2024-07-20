@@ -1,3 +1,4 @@
+import { ChoiceResults } from "@/api/actions";
 import { getAIClient } from "./client";
 import { getAudio } from "./elevenLabs";
 
@@ -115,6 +116,64 @@ export const generateElevenAudio = async (text: string): Promise<Buffer> => {
   // const buffer = Buffer.from(await mp3.arrayBuffer());
 
   return buffer;
+};
+
+export const getNewItems = async (choices: ChoiceResults) => {
+  const client = getAIClient();
+
+  const choicesForContext = choices.map(
+    (choice) =>
+      `The user would trade ${choice.sub.title} for ${choice.obj.title}`,
+  );
+
+  const listOfSentiments = choices.map(
+    (choice) => `
+    ${choice.sub.title},${choice.sub.sentiment}
+    ${choice.obj.title},${choice.obj.sentiment}
+    `,
+  );
+
+  const response = await client.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: `
+        Given the following choices made by a user and the accompanying list of intimacy scores for each item (between 1-5), generate a list of three other item recommendations that a user might be willing to trade. Base the decision on both the items as well as their associated intimacy score (between 1-5).
+
+ Write the list with a new line for each item and the intimacy score following it, separated buy a comma and nothing else. Do not write anything other than the item and the intimacy score separated by a comma for each.
+        `,
+      },
+      {
+        role: "user",
+        content: `
+        User choices:
+        ${choicesForContext.join("\n")}
+
+        Item scores:
+        ${listOfSentiments.join("\n")}
+        `,
+      },
+    ],
+    temperature: 0.7,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    stream: false,
+    n: 1,
+  });
+
+  const content = response.choices[0].message?.content;
+
+  const items = content.split("\n").map((item) => {
+    const [title, sentiment] = item.split(",");
+    return {
+      title: title.trim(),
+      sentiment: parseInt(sentiment, 10),
+    };
+  });
+
+  return items;
 };
 
 export const generateAudio = generateOpenAIAudio;
