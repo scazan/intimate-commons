@@ -1,12 +1,40 @@
 import prisma from "@/lib/prisma";
 
-export const getAllGroups = async () => {
-  const allGroups = await prisma.choice.groupBy({
-    by: ["subId", "objId"],
-    _count: {
-      subId: true,
-    },
-  });
+export const getAllGroups = async (groupId: string) => {
+  // const allGroups = await prisma.choice.groupBy({
+  // by: ["subId", "objId"],
+  // _count: {
+  // subId: true,
+  // },
+  // });
+  // const allGroups = await prisma.choice.groupBy({
+  // by: ["subId", "objId"],
+  // _count: {
+  // subId: true,
+  // },
+  // where: {
+  // session: {
+  // groupId: "clyuk0r2l000010eoikuwlcgj",
+  // },
+  // },
+  // include: {
+  // session: true,
+  // },
+  // });
+
+  const allGroups = (await prisma.$queryRaw`SELECT
+    "Choice"."subId",
+    "Choice"."objId",
+    count("Choice"."subId")
+
+    FROM "Choice"
+    JOIN "Session" ON "Choice"."sessionId" = "Session".id
+    WHERE "Session"."groupId" = ${groupId}
+
+    GROUP BY "Choice"."subId", "Choice"."objId";
+  `) as Array<{ objId: string; subId: string; count: number }>;
+
+  console.log(">>>>>>>>>", typeof allGroups[0].count);
 
   const allItemsInResults = allGroups.map((item) => [item.objId, item.subId]);
 
@@ -23,8 +51,10 @@ export const getAllGroups = async () => {
     return accum;
   }, {});
 
+  console.log("ALL ITEMS", allItems);
+
   const resolved = allGroups.map((group) => ({
-    count: group._count.subId,
+    count: parseInt(group.count.toString(), 10),
     sub: allItems[group.subId],
     obj: allItems[group.objId],
   }));

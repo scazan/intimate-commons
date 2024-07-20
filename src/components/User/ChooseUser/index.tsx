@@ -11,7 +11,7 @@ export const ChooseUser = ({ className, userId, userName }) => {
   const searchParams = new URLSearchParams(window.location.search);
 
   const start = async () => {
-    const group = searchParams.get("g");
+    const group = searchParams.get("gid");
     startTransition(async () => {
       await verifyUserAndNavigate(group);
     });

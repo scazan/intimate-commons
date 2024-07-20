@@ -8,6 +8,7 @@ import { uploadBufferToStorage } from "@/lib/storage";
 import { createUser as icCreateUser } from "@/lib/intimateCommons/services/user";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { setGroupID } from "..";
 
 export const createUser = async (data: FormData) => {
   "use server";
@@ -23,10 +24,11 @@ export const createUser = async (data: FormData) => {
   return { id: newUser.id };
 };
 
-export const verifyUserAndNavigate = async (group?: string) => {
+export const verifyUserAndNavigate = async (groupTitle?: string) => {
   "use server";
-  const { value: userId } = cookies().get("userId");
-  const { value: userName } = cookies().get("userName");
+  const { value: userId } = cookies().get("userId") || {};
+  const { value: userName } = cookies().get("userName") || {};
+  const { value: groupIdCookie } = cookies().get("groupId") || {};
 
   const currentUser = await prisma.user.findUnique({ where: { id: userId } });
 
@@ -37,8 +39,10 @@ export const verifyUserAndNavigate = async (group?: string) => {
     cookies().set("userId", newUser.id);
   }
 
-  if (group) {
-    cookies().set("group", group);
+  const groupId = await setGroupID(groupTitle || groupIdCookie);
+
+  if (groupId) {
+    cookies().set("groupId", groupId);
   }
 
   redirect("/questions");
@@ -68,7 +72,7 @@ const getComputedResults = (globalResults, userResults, userCount) => {
   };
 };
 
-export const getResults = async ({ userId, sessionId }) => {
+export const getResults = async ({ userId, sessionId, groupId }) => {
   const userResultsDetails = (await prisma.$queryRaw`SELECT 
   c.id AS choice_id,
     c."userId",
@@ -99,7 +103,7 @@ export const getResults = async ({ userId, sessionId }) => {
           obj: true,
         },
       }),
-      getAllGroups(),
+      getAllGroups(groupId),
       prisma.story.findFirst({
         where: {
           sessionId,
@@ -109,6 +113,7 @@ export const getResults = async ({ userId, sessionId }) => {
       prisma.user.count(),
     ]);
 
+  console.log("globalResults", globalResults);
   if (existingStory) {
     console.log("already exists");
     const { global, user } = getComputedResults(

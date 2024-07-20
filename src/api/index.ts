@@ -3,29 +3,37 @@ import { getItemSentiment } from "@/lib/ai/query";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 
-export const getQuestions = async () => {
-  const { value: userId } = cookies().get("userId");
-  const { value: group } = cookies().get("group");
-
+export const setGroupID = async (groupTitle: string) => {
   // if there was no cookie for a group, use the default group
-  let groupRecord = await prisma.group.findFirst({
-    where: { title: group || "default" },
+  const groupRecord = await prisma.group.findFirst({
+    where: { ...(groupTitle ? { id: groupTitle } : { id: "default" }) },
   });
 
+  // if we didn't find it by ID, search by title
   if (!groupRecord) {
-    groupRecord = await prisma.group.create({
+    // if there was no group by title or id then create one
+    const newGroupRecord = await prisma.group.create({
       data: {
-        title: group,
+        id: groupTitle,
       },
     });
+
+    return newGroupRecord.id;
   }
+
+  return groupRecord.id;
+};
+
+export const getQuestions = async () => {
+  const { value: userId } = cookies().get("userId") || {};
+  const { value: groupId } = cookies().get("groupId") || {};
 
   const randomChoices =
     await prisma.$queryRaw`SELECT "Item".id, "Item"."groupId", "Item"."title", "Item"."isUserDefined", "Item"."isSubjectOnly", "Item".sentiment
     FROM "Item"
     LEFT JOIN "Group" ON "Group".id = "Item"."groupId"
     WHERE "Group".id IS NULL
-    OR "Group".title = '${groupRecord.id}'
+    OR "Group".id = '${groupId}'
 
     ORDER BY random()
     LIMIT 20;`;
@@ -36,18 +44,23 @@ export const getQuestions = async () => {
         connect: { id: userId },
       },
       group: {
-        connect: { id: groupRecord.id },
+        connect: { id: groupId },
       },
     },
   });
 
-  return { userId, choices: randomChoices, sessionId: newSession.id };
+  return {
+    userId,
+    groupId: groupId,
+    choices: randomChoices,
+    sessionId: newSession.id,
+  };
 };
 
 // based in a semantic triple
 // SUBJECT ---predicate: "would share in exchange for"---> OBJECT
 export const addChoice = async ({ subId, objId, sessionId }) => {
-  const { value: userId } = cookies().get("userId");
+  const { value: userId } = cookies().get("userId") || {};
 
   console.log(sessionId, "-", userId, "would trade", subId, "for", objId);
 
@@ -88,7 +101,7 @@ export const addItem = async ({ title }) => {
 };
 
 export const getChoiceCounts = async () => {
-  const { value: userId } = cookies().get("userId");
+  const { value: userId } = cookies().get("userId") || {};
 
   // const objectCounts = await prisma.$queryRaw`
   // SELECT objItems.title as ObjectTitle, subItems.title as SubTitle, Count(*)

@@ -8,7 +8,7 @@ const randomIndex = (length) => Math.floor(Math.random() * (length - 1));
 async function main() {
   const defaultGroup = await prisma.group.create({
     data: {
-      title: "default",
+      id: "default",
     },
   });
 

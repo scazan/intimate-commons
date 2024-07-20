@@ -1,5 +1,6 @@
 import { getQuestions } from "@/api";
 import QuestionForm from "@/components/QuestionForm";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 
 export default async () => {

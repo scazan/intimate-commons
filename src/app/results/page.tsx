@@ -6,14 +6,19 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export default async ({ searchParams }) => {
-  const { value: userId } = cookies().get("userId");
-  const { sid } = searchParams;
+  const { value: userId } = cookies().get("userId") || {};
+  const { value: groupId } = cookies().get("groupId") || {};
+  const { sid, gid } = searchParams;
 
   if (!userId) {
     notFound();
   }
 
-  const results = await getResults({ userId, sessionId: sid });
+  const results = await getResults({
+    userId,
+    sessionId: sid,
+    groupId: gid || groupId,
+  });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start gap-4 p-4">
