@@ -1,5 +1,4 @@
 import { getQuestions } from "@/api";
-import { checkUserId } from "@/api/actions";
 import QuestionForm from "@/components/QuestionForm";
 import { Suspense } from "react";
 
