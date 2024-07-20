@@ -1,11 +1,12 @@
-import { waitUntil } from "@vercel/functions";
-import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { getAllGroups } from "@/lib/intimateCommons";
 import { UserDetailRow, createStory } from "@/lib/intimateCommons/stories";
 import { Story } from "@prisma/client";
 import { generateAudio } from "@/lib/ai/query";
 import { uploadBufferToStorage } from "@/lib/storage";
+import { createUser as icCreateUser } from "@/lib/intimateCommons/services/user";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const createUser = async (data: FormData) => {
   "use server";
@@ -13,16 +14,29 @@ export const createUser = async (data: FormData) => {
   const formName = data.get("name") || "anonymous";
   const name = formName.valueOf().toString();
 
-  const newUser = await prisma.users.create({
-    data: {
-      name,
-    },
-  });
+  const newUser = await icCreateUser(name);
 
   cookies().set("userId", newUser.id);
   cookies().set("userName", newUser.name);
 
   return { id: newUser.id };
+};
+
+export const verifyUserAndNavigate = async () => {
+  "use server";
+  const { value: userId } = cookies().get("userId");
+  const { value: userName } = cookies().get("userName");
+
+  const currentUser = await prisma.users.findUnique({ where: { id: userId } });
+
+  if (!currentUser) {
+    // if the user couldn't be found the userID was lost so create a new one.
+    const newUser = await icCreateUser(userName);
+
+    cookies().set("userId", newUser.id);
+  }
+
+  redirect("/questions");
 };
 
 const getComputedResults = (globalResults, userResults, userCount) => {

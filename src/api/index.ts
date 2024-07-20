@@ -1,4 +1,6 @@
+"use server";
 import { getItemSentiment } from "@/lib/ai/query";
+import { createUser } from "@/lib/intimateCommons/services/user";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 
@@ -17,7 +19,7 @@ export const getQuestions = async () => {
     },
   });
 
-  return { choices: randomChoices, sessionId: newSession.id };
+  return { userId, choices: randomChoices, sessionId: newSession.id };
 };
 
 // based in a semantic triple

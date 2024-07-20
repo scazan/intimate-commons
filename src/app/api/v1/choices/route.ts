@@ -9,6 +9,10 @@ const inputSchema = z.object({
   isCustom: z.coerce.boolean(),
 });
 
+export const GET = () => {
+  return new NextResponse("hello");
+};
+
 export async function POST(request: Request) {
   const jsonBody = await request.json();
 

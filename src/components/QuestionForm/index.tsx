@@ -32,6 +32,7 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
         headers: {
           "Content-Type": "application/json",
         },
+        // semantic triple
         body: JSON.stringify({
           subId: subject.id,
           objId,
