@@ -13,17 +13,17 @@ export const GET = async (_: NextRequest, { params }) => {
     subItems."title" AS subject_title,
     objItems."title" AS object_title
   FROM 
-  public."Choices" c
+  public."Choice" c
   JOIN public."Users" ON c."userId" = "Users".id
   JOIN 
-  public."Items" subItems ON c."subId" = subItems.id
+  public."Item" subItems ON c."subId" = subItems.id
   JOIN 
-  public."Items" objItems ON c."objId" = objItems.id
+  public."Item" objItems ON c."objId" = objItems.id
   WHERE
   "Users".id = ${userId};`;
 
   const [globalResults] = await Promise.all([
-    prisma.choices.findMany({
+    prisma.choice.findMany({
       relationLoadStrategy: "join",
       where: {
         userId: userId,

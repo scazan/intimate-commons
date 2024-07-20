@@ -23,18 +23,22 @@ export const createUser = async (data: FormData) => {
   return { id: newUser.id };
 };
 
-export const verifyUserAndNavigate = async () => {
+export const verifyUserAndNavigate = async (group?: string) => {
   "use server";
   const { value: userId } = cookies().get("userId");
   const { value: userName } = cookies().get("userName");
 
-  const currentUser = await prisma.users.findUnique({ where: { id: userId } });
+  const currentUser = await prisma.user.findUnique({ where: { id: userId } });
 
   if (!currentUser) {
     // if the user couldn't be found the userID was lost so create a new one.
     const newUser = await icCreateUser(userName);
 
     cookies().set("userId", newUser.id);
+  }
+
+  if (group) {
+    cookies().set("group", group);
   }
 
   redirect("/questions");
@@ -72,20 +76,20 @@ export const getResults = async ({ userId, sessionId }) => {
     c."created_at" AS choice_created_at,
     subItems."title" AS sub_title,
     objItems."title" AS obj_title,
-    "Users".name
+    "User".name
   FROM 
-  public."Choices" c
-  JOIN public."Users" ON c."userId" = "Users".id
+  public."Choice" c
+  JOIN public."User" ON c."userId" = "User".id
   JOIN 
-  public."Items" subItems ON c."subId" = subItems.id
+  public."Item" subItems ON c."subId" = subItems.id
   JOIN 
-  public."Items" objItems ON c."objId" = objItems.id
+  public."Item" objItems ON c."objId" = objItems.id
   WHERE
-  "Users".id = ${userId};`) as Array<UserDetailRow>;
+  "User".id = ${userId};`) as Array<UserDetailRow>;
 
   const [userResults, globalResults, existingStory, userCount] =
     await Promise.all([
-      prisma.choices.findMany({
+      prisma.choice.findMany({
         relationLoadStrategy: "join",
         where: {
           userId,
@@ -102,7 +106,7 @@ export const getResults = async ({ userId, sessionId }) => {
         },
       }),
 
-      prisma.users.count(),
+      prisma.user.count(),
     ]);
 
   if (existingStory) {

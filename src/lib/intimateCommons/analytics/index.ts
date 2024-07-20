@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 
 export const getAllGroups = async () => {
-  const allGroups = await prisma.choices.groupBy({
+  const allGroups = await prisma.choice.groupBy({
     by: ["subId", "objId"],
     _count: {
       subId: true,
@@ -12,7 +12,7 @@ export const getAllGroups = async () => {
 
   // TODO: Need to pull this into SQL side code instead maybe
   const allItems = (
-    await prisma.items.findMany({
+    await prisma.item.findMany({
       relationLoadStrategy: "join",
       where: {
         id: { in: allItemsInResults.flat() },

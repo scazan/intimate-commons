@@ -1,5 +1,5 @@
 export const createUser = async (name: string) => {
-  const newUser = await prisma.users.create({
+  const newUser = await prisma.user.create({
     data: {
       name,
     },

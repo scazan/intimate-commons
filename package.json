@@ -9,7 +9,7 @@
     "db:push": "npx prisma db push --force-reset && pnpm run db:generate",
     "db:generate": "npx prisma generate",
     "db:explore": "npx prisma studio",
-    "db:reset": "npx prisma migrate reset --skip-seed && npm run db:push && npm run db:seed",
+    "db:reset": "pnpm run db:push && pnpm run db:generate && pnpm run db:seed",
     "db:seed": "npx prisma db seed",
     "db:clear": "pnpm db:push && pnpm db:seed",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
