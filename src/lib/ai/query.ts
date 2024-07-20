@@ -141,7 +141,7 @@ export const getNewItems = async (choices: ChoiceResults) => {
         content: `
         Given the following choices made by a user and the accompanying list of intimacy scores for each item (between 1-5), generate a list of three other item recommendations that a user might be willing to trade. Base the decision on both the items as well as their associated intimacy score (between 1-5).
 
- Write the list with a new line for each item and the intimacy score following it, separated buy a comma and nothing else. Do not write anything other than the item and the intimacy score separated by a comma for each.
+ Write the list with a new line for each item and the intimacy score following it, separated buy a comma and nothing else. Do not write anything other than the item and the intimacy score separated by a comma for each (ie. Item,5). Do not add bullets or any list numbering.
         `,
       },
       {
