@@ -1,5 +1,5 @@
 "use client";
-import React, { useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/base/ui";
 import { CreateUser } from "..";
 import { verifyUserAndNavigate } from "@/api/actions";
@@ -8,12 +8,14 @@ import { LoadingCircle } from "@/components/LoadingCircle";
 
 export const ChooseUser = ({ className, userId, userName }) => {
   const [isTransitioning, startTransition] = useTransition();
-  const searchParams = window
-    ? new URLSearchParams(window?.location.search)
-    : new Map();
+  const [group, setGroup] = useState<string>();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window?.location.search);
+    setGroup(searchParams.get("gid"));
+  }, []);
 
   const start = async () => {
-    const group = searchParams.get("gid");
     startTransition(async () => {
       await verifyUserAndNavigate(group);
     });
