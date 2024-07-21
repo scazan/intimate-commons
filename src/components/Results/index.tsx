@@ -17,8 +17,8 @@ export const Results = async ({ results }) => {
       <Header2>Global</Header2>
 
       <ChoiceResults choices={results.global} global />
+
+      <ResultsViz className="hidden sm:hidden" data={results.global} />
     </div>
   );
 };
-
-// <ResultsViz data={results.global} />

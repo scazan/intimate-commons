@@ -125,7 +125,13 @@ const getCirclePackedData = (data: {
   return svg.node();
 };
 
-export const ResultsViz = ({ data }: { data: ChoiceCount[] }) => {
+export const ResultsViz = ({
+  data,
+  className,
+}: {
+  data: ChoiceCount[];
+  className?: string;
+}) => {
   useEffect(() => {
     d3.select("#chart").select("svg").remove();
 
@@ -136,5 +142,5 @@ export const ResultsViz = ({ data }: { data: ChoiceCount[] }) => {
     });
   }, []);
 
-  return <div id="chart"></div>;
+  return <div id="chart" className={className}></div>;
 };
