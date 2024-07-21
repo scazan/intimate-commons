@@ -8,7 +8,9 @@ import { LoadingCircle } from "@/components/LoadingCircle";
 
 export const ChooseUser = ({ className, userId, userName }) => {
   const [isTransitioning, startTransition] = useTransition();
-  const searchParams = new URLSearchParams(window?.location.search);
+  const searchParams = window
+    ? new URLSearchParams(window?.location.search)
+    : new Map();
 
   const start = async () => {
     const group = searchParams.get("gid");
