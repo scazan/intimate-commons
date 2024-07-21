@@ -11,6 +11,7 @@ export const Results = async ({ results }) => {
       <AudioPlayer
         src={`https://pub-58753b13db894b5ea3d9730f9a15a537.r2.dev/${storyId}.mp3`}
       />
+      <Header2>Results</Header2>
       <ChoiceResults choices={results.user} />
 
       <Header2>Global</Header2>

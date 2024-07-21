@@ -51,7 +51,10 @@ export default function RootLayout({
       <body className={`${gosha.variable} ${editorialNew.variable} font-serif`}>
         <AudioPlayer />
         <SiteHeader />
-        {children}
+
+        <main className="flex min-h-screen flex-col items-center justify-between p-4  pb-32">
+          {children}
+        </main>
         <div className="bottomGradient z-10"></div>
       </body>
     </html>

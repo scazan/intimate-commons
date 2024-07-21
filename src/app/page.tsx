@@ -6,7 +6,7 @@ export default async () => {
   const userName = cookies().get("userName");
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-4 font-extralight font-serif text-[2rem] leading-[2.575rem] pb-32">
+    <div className="sm:max-w-7xl flex min-h-screen flex-col items-center justify-between p-4 font-extralight font-serif text-[2rem] leading-[2.575rem] pb-32">
       <div className="flex flex-col gap-8">
         <p>
           Welcome to Intimate Commons an exploration of personal boundaries and
@@ -35,6 +35,6 @@ export default async () => {
           className="text-center bg-background/80"
         />
       </div>
-    </main>
+    </div>
   );
 };

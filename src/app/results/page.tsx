@@ -21,11 +21,10 @@ export default async ({ searchParams }) => {
   });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start gap-4 p-4">
-      <Header2>Results</Header2>
+    <>
       <Suspense fallback={<div>Loading...</div>}>
         <Results results={results} />
       </Suspense>
-    </main>
+    </>
   );
 };
