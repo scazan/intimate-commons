@@ -1,23 +1,24 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const useAudio = () => {
   const [src, setSrc] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [audio, setAudio] = useState<HTMLAudioElement>();
-  const [bgAudio, setBgAudio] = useState<HTMLAudioElement>();
+  // const [audio, setAudio] = useState<HTMLAudioElement>();
+  const audioRef = useRef(new Audio());
+  const audio = audioRef.current;
+
+  const bgAudioRef = useRef(new Audio());
+  const bgAudio = audioRef.current;
+  // const [bgAudio, setBgAudio] = useState<HTMLAudioElement>();
 
   useEffect(() => {
-    const bgAudio = new Audio();
-    setAudio(new Audio());
     bgAudio.src = "/IC-Underscore.mp3";
     bgAudio.volume = 1;
     bgAudio.oncanplaythrough = () => {
       bgAudio.play();
     };
-
-    setBgAudio(bgAudio);
   }, []);
 
   useEffect(() => {
@@ -31,17 +32,14 @@ export const useAudio = () => {
   }, [src]);
 
   useEffect(() => {
-    if (!bgAudio) {
-      return;
-    }
-
     if (isPlaying) {
-      audio.play();
+      // audio.play();
       audio.volume = 1;
 
-      bgAudio.play();
+      // bgAudio.play();
       bgAudio.volume = 1;
     } else {
+      // audio.pause();
       audio.volume = 0;
       bgAudio.volume = 0;
     }

@@ -32,8 +32,9 @@ export const getQuestions = async () => {
     await prisma.$queryRaw`SELECT "Item".id, "Item"."groupId", "Item"."title", "Item"."isUserDefined", "Item"."isSubjectOnly", "Item".sentiment
     FROM "Item"
     LEFT JOIN "Group" ON "Group".id = "Item"."groupId"
-    WHERE "Group".id IS NULL
-    OR "Group".id = '${groupId}'
+    WHERE ("Group".id IS NULL
+    OR "Group".id = '${groupId}')
+    AND "Item".title != 'never'
 
     ORDER BY random()
     LIMIT 20;`;
