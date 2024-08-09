@@ -6,7 +6,6 @@ import { Choice, Header2, Header3 } from "@/components";
 import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem } from "../base/ui/form";
 import { useForm } from "react-hook-form";
-import { LoaderCircle } from "lucide-react";
 import { LoadingCircle } from "../LoadingCircle";
 
 export const QuestionForm = ({ choices, sessionId, className }) => {
@@ -19,9 +18,10 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
   const choicesMade = [];
 
   const handleNext = async (values) => {
-    if (values.object !== "skip") {
+    const isCustom = values.object === "custom";
+
+    if (values.object !== "skip" && !(isCustom && !values.customInput)) {
       let objId = values.object;
-      const isCustom = values.object === "custom";
 
       if (isCustom) {
         objId = values.customInput;
@@ -66,8 +66,9 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
 
     setStep((step) => step + 1);
 
-    form.reset();
     form.setValue("customInput", "");
+    form.setValue("object", "skip");
+    form.reset();
     return false;
   };
 
@@ -79,6 +80,7 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
 
     setStep((step) => step - 1);
 
+    form.setValue("customInput", "");
     form.reset();
     return false;
   };
@@ -94,6 +96,13 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
       object: "skip",
     },
   });
+
+  useEffect(() => {
+    if (form.formState.isSubmitSuccessful) {
+      form.setValue("customInput", "");
+      form.reset({ object: "skip" });
+    }
+  }, [form.formState]);
 
   return (
     <>
@@ -136,6 +145,14 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
                                 variant="unstyled"
                                 placeholder="fill in an exchange of your choosing"
                                 {...field}
+                                onFocusCapture={() => {
+                                  const customInput =
+                                    document.body.querySelector(
+                                      "button[value=custom]",
+                                    );
+                                  // @ts-ignore
+                                  customInput.click();
+                                }}
                               />
                             </FormControl>
                           </FormItem>
