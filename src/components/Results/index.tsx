@@ -15,10 +15,9 @@ export const Results = async ({ results }) => {
       <ChoiceResults choices={results.user} />
 
       <Header2>Global</Header2>
+      <ResultsViz className="hidden sm:block" data={results.global} />
 
       <ChoiceResults choices={results.global} global />
-
-      <ResultsViz className="hidden sm:hidden" data={results.global} />
     </div>
   );
 };
