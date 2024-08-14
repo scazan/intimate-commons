@@ -69,6 +69,7 @@ async function main() {
 
   const neverItem = await prisma.item.create({
     data: {
+      id: "never",
       title: "never",
       isSubjectOnly: false,
       sentiment: 0,

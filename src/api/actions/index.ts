@@ -57,7 +57,7 @@ const getComputedResults = (globalResults, userResults, userCount) => {
   const computedUserResults = userResults.map((choice) => {
     // TODO: this is not right. percentages should be based on subject
     const globalObj = computedGlobalResults.find((globalChoice) => {
-      return globalChoice.obj.id === choice.obj.id;
+      return globalChoice.sub.id === choice.sub.id;
     });
 
     return {
@@ -89,7 +89,7 @@ export const getResults = async ({ userId, sessionId, groupId }) => {
   JOIN 
   public."Item" objItems ON c."objId" = objItems.id
   WHERE
-  "User".id = ${userId};`) as Array<UserDetailRow>;
+  "User".id = ${userId}`) as Array<UserDetailRow>;
 
   const [userResults, globalResults, existingStory, userCount] =
     await Promise.all([
@@ -141,8 +141,6 @@ export const getResults = async ({ userId, sessionId, groupId }) => {
       },
     },
   });
-
-  console.log("newStory", newStory);
 
   // fork off the audio generation
   // waitUntil(

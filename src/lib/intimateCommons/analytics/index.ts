@@ -24,25 +24,25 @@ export const getAllGroups = async (groupId: string) => {
 
   const allGroups = (await prisma.$queryRaw`SELECT
     "Choice"."subId",
-    "Choice"."objId",
-    count("Choice"."objId")
+    count("Choice"."subId")
 
-    FROM "Choice"
-    JOIN "Session" ON "Choice"."sessionId" = "Session".id
+  FROM "Choice"
+  JOIN "Session" ON "Choice"."sessionId" = "Session".id
 
-    WHERE "Session"."groupId" = ${groupId}
+  WHERE "Session"."groupId" = ${groupId}
+  AND "Choice"."objId" != 'never'
 
-    GROUP BY "Choice"."objId", "Choice"."subId"
+  GROUP BY "Choice"."subId";
   `) as Array<{ objId: string; subId: string; count: number }>;
 
-  const allItemsInResults = allGroups.map((item) => [item.objId, item.subId]);
+  const allItemsInResults = allGroups.map((item) => item.subId);
 
   // TODO: Need to pull this into SQL side code instead maybe
   const allItems = (
     await prisma.item.findMany({
       relationLoadStrategy: "join",
       where: {
-        id: { in: allItemsInResults.flat() },
+        id: { in: allItemsInResults },
       },
     })
   ).reduce((accum, item) => {
@@ -53,7 +53,6 @@ export const getAllGroups = async (groupId: string) => {
   const resolved = allGroups.map((group) => ({
     count: parseInt(group.count.toString(), 10),
     sub: allItems[group.subId],
-    obj: allItems[group.objId],
   }));
 
   return resolved;

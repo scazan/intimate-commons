@@ -18,34 +18,61 @@ export const ChoiceResult = ({ choice, global = false }) => {
   const wouldData = [{ value: percentage }, { value: 100 - percentage }];
   const wouldNotData = [{ value: 100 - percentage }, { value: percentage }];
 
+  const isNever = !global && choice.obj.id === "never";
+
+  let text;
+
+  if (isNever) {
+    text = !global ? (
+      <div className="text-[2rem] font-extralight font-serif">
+        I would{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.obj.title}
+        </span>{" "}
+        share my{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.sub.title}
+        </span>
+      </div>
+    ) : (
+      <div className="text-[2rem] font-extralight font-serif">
+        Others would{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.obj.title}
+        </span>{" "}
+        share their{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.sub.title}
+        </span>
+      </div>
+    );
+  } else {
+    text = !global ? (
+      <div className="text-[2rem] font-extralight font-serif">
+        I would share my{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.sub.title}
+        </span>{" "}
+        in exchange for{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.obj.title}
+        </span>
+      </div>
+    ) : (
+      <div className="text-[2rem] font-extralight font-serif">
+        Others would share their{" "}
+        <span className="font-sans font-extralight uppercase">
+          {choice.sub.title}
+        </span>{" "}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-3">
-      {!global ? (
-        <div className="text-[2rem] font-extralight font-serif">
-          I would share my{" "}
-          <span className="font-sans font-extralight uppercase">
-            {choice.obj.title}
-          </span>{" "}
-          in exchange for{" "}
-          <span className="font-sans font-extralight uppercase">
-            {choice.sub.title}
-          </span>
-        </div>
-      ) : (
-        <div className="text-[2rem] font-extralight font-serif">
-          Others would share their{" "}
-          <span className="font-sans font-extralight uppercase">
-            {choice.obj.title}
-          </span>{" "}
-          in exchange for{" "}
-          <span className="font-sans font-extralight uppercase">
-            {choice.sub.title}
-          </span>
-        </div>
-      )}
+      {text}
 
       <div id="charts" className="flex flex-row gap-12">
-        <Chart data={wouldData} label="Would do the same" />
         <Chart data={wouldData} label="Would exchange" />
         <Chart data={wouldNotData} label="Would not exchange" color="blue" />
       </div>

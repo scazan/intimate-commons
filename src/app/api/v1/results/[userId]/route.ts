@@ -15,12 +15,9 @@ export const GET = async (_: NextRequest, { params }) => {
   FROM 
   public."Choice" c
   JOIN public."Users" ON c."userId" = "Users".id
-  JOIN 
-  public."Item" subItems ON c."subId" = subItems.id
-  JOIN 
-  public."Item" objItems ON c."objId" = objItems.id
-  WHERE
-  "Users".id = ${userId};`;
+  JOIN public."Item" subItems ON c."subId" = subItems.id
+  JOIN public."Item" objItems ON c."objId" = objItems.id
+  WHERE "Users".id = ${userId};`;
 
   const [globalResults] = await Promise.all([
     prisma.choice.findMany({
