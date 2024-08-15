@@ -8,7 +8,7 @@ export const SiteHeader = async () => {
         <h1 className="text-xl">Intimate Commons</h1>
       </Link>
       <Button asChild variant="large">
-        <Link href="/questions">About</Link>
+        <Link href="/about">About</Link>
       </Button>
     </header>
   );
