@@ -1,6 +1,6 @@
 "use client";
 import { Label, RadioGroupItem } from "../base/ui";
-import { FormControl, FormItem, FormLabel } from "../base/ui/form";
+import { FormControl, FormItem } from "../base/ui/form";
 
 interface IProps extends React.ComponentProps<"div"> {
   label?: string;

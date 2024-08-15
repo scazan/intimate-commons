@@ -69,6 +69,12 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
     form.setValue("customInput", "");
     form.setValue("object", "skip");
     form.reset();
+    // bit of a hack as react-form is not clearing the input state on the component itself
+    const buttons = document.querySelectorAll("button");
+    buttons.forEach((button) => {
+      button.dataset.state = "";
+      button.ariaChecked = "false";
+    });
     return false;
   };
 
