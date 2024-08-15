@@ -71,7 +71,6 @@ export const AudioPlayerProvider = ({ children }) => {
 
   useEffect(() => {
     const { audio, bgAudio } = context;
-    console.log("audio", audio, context.audio);
     if (!audio || !bgAudio) {
       return;
     }
@@ -99,8 +98,10 @@ export const AudioPlayerProvider = ({ children }) => {
   }, [context.audio, context.bgAudio]);
 
   useEffect(() => {
-    context.audio = new Audio();
-    context.bgAudio = new Audio();
+    if (!context.audio) {
+      context.audio = new Audio();
+      context.bgAudio = new Audio();
+    }
   }, []);
 
   const [isPlaying, setIsPlaying] = useState(true);
