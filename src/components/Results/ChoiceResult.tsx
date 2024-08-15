@@ -7,7 +7,7 @@ export const ChoiceResults = ({ choices, ...props }) => {
   return (
     <div className="flex flex-col gap-12">
       {choices.map((choice) => (
-        <ChoiceResult choice={choice} {...props} />
+        <ChoiceResult key={choice.id} choice={choice} {...props} />
       ))}
     </div>
   );
