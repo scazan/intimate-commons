@@ -56,7 +56,7 @@ const getCirclePackedData = (data: {
     .selectAll("circle")
     .data(root.descendants().slice(1))
     .join("circle")
-    .style("box-shadow", "0px 0px 48px 0px")
+    .style("box-shadow", "0px 0px 48px 0px hsla(198, 74%, 63%, 0.24)")
     .attr("fill", (d) =>
       d.children ? color(d.depth) : colors[colorIndex++ % colors.length],
     )
@@ -76,6 +76,7 @@ const getCirclePackedData = (data: {
   const label = svg
     .append("g")
     .style("font-size", "0.75rem")
+    .style("font-weight", "200")
     .attr("pointer-events", "none")
     .attr("text-anchor", "middle")
     .selectAll("text")
@@ -86,6 +87,23 @@ const getCirclePackedData = (data: {
     .style("text-transform", "uppercase")
     .style("display", (d) => (d.parent === root ? "inline" : "none"))
     .text((d) => d.data.sub?.title);
+
+  const subLabel = svg
+    .append("g")
+    .style("font-size", "0.5rem")
+    .style("font-weight", "200")
+    .attr("pointer-events", "none")
+    .attr("text-anchor", "middle")
+    .selectAll("text")
+    .data(root.descendants())
+    .join("text")
+    .style("fill-opacity", (d) => (d.parent === root ? 1 : 0))
+    .style("fill", "white")
+    .style("text-transform", "uppercase")
+    .style("display", (d) => (d.parent === root ? "inline" : "none"))
+    .text((d) =>
+      d.data.count > 1 ? `${d.data.count} people` : `${d.data.count} person`,
+    );
 
   // Create the zoom behavior and zoom immediately in to the initial focus node.
   svg.on("click", (event) => zoom(event, root));
@@ -101,6 +119,10 @@ const getCirclePackedData = (data: {
     label.attr(
       "transform",
       (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`,
+    );
+    subLabel.attr(
+      "transform",
+      (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k + 15})`,
     );
     node.attr(
       "transform",

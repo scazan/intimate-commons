@@ -1,11 +1,12 @@
 "use client";
+import { cn } from "@/lib/utils";
 import * as d3 from "d3";
 
 import { useEffect, useRef } from "react";
 
-export const ChoiceResults = ({ choices, ...props }) => {
+export const ChoiceResults = ({ choices, className = null, ...props }) => {
   return (
-    <div className="flex flex-col gap-12">
+    <div className={cn("flex flex-col gap-12", className)}>
       {choices.map((choice) => (
         <ChoiceResult key={choice.id} choice={choice} {...props} />
       ))}
@@ -36,7 +37,7 @@ export const ChoiceResult = ({ choice, global = false }) => {
       </div>
     ) : (
       <div className="text-[2rem] font-extralight font-serif">
-        Others would{" "}
+        Others that would{" "}
         <span className="font-sans font-extralight uppercase">
           {choice.obj.title}
         </span>{" "}
@@ -60,7 +61,7 @@ export const ChoiceResult = ({ choice, global = false }) => {
       </div>
     ) : (
       <div className="text-[2rem] font-extralight font-serif">
-        Others would share their{" "}
+        Others that would share their{" "}
         <span className="font-sans font-extralight uppercase">
           {choice.sub.title}
         </span>{" "}
