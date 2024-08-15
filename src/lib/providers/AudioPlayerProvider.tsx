@@ -11,8 +11,8 @@ import {
 export const AudioPlayerContext = createContext({
   play: () => {},
   pause: () => {},
-  audio: new Audio(),
-  bgAudio: new Audio(),
+  audio: null,
+  bgAudio: null,
   isPlaying: true,
   setIsPlaying: (should: boolean) => {},
   setSrc: (src: string) => {},
@@ -37,9 +37,11 @@ export const useDispatch = () => {
 };
 
 export const AudioPlayerProvider = ({ children }) => {
-  const { audio, bgAudio, ...context } = useContext(AudioPlayerContext);
+  const context = useContext(AudioPlayerContext);
 
   const play = () => {
+    const { audio, bgAudio } = context;
+
     audio.play();
     audio.volume = 1;
 
@@ -50,6 +52,8 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const pause = () => {
+    const { audio, bgAudio } = context;
+
     audio.pause();
     audio.volume = 0;
     bgAudio.pause();
@@ -57,6 +61,7 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const setSrc = (src: string) => {
+    const { audio } = context;
     audio.src = src;
     audio.volume = 1;
     audio.oncanplaythrough = () => {
@@ -65,6 +70,12 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    const { audio, bgAudio } = context;
+    console.log("audio", audio, context.audio);
+    if (!audio || !bgAudio) {
+      return;
+    }
+
     bgAudio.src = "/IC-Underscore.mp3";
     bgAudio.volume = 1;
     bgAudio.oncanplaythrough = () => {
@@ -85,6 +96,11 @@ export const AudioPlayerProvider = ({ children }) => {
 
     window.addEventListener("touchstart", bindTouchPlay);
     window.addEventListener("click", bindTouchPlay);
+  }, [context.audio, context.bgAudio]);
+
+  useEffect(() => {
+    context.audio = new Audio();
+    context.bgAudio = new Audio();
   }, []);
 
   const [isPlaying, setIsPlaying] = useState(true);
@@ -96,8 +112,8 @@ export const AudioPlayerProvider = ({ children }) => {
         play,
         pause,
         isPlaying,
-        audio,
-        bgAudio,
+        audio: null,
+        bgAudio: null,
         setSrc,
         setIsPlaying: (should) => {
           if (should) {
