@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 
 export const ChoiceResults = ({ choices, className = null, ...props }) => {
   return (
-    <div className={cn("flex flex-col gap-12", className)}>
+    <div className={cn("flex flex-col gap-12 max-w-2xl", className)}>
       {choices.map((choice) => (
         <ChoiceResult key={choice.id} choice={choice} {...props} />
       ))}

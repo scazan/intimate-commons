@@ -1,6 +1,7 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as d3 from "d3";
+import { VoteStatsPanel } from "./VoteStatsPanel";
 
 type ChoiceCount = { count: number; sub: { title: string } };
 
@@ -13,10 +14,13 @@ const colors = [
 ];
 let colorIndex = 0;
 
-const getCirclePackedData = (data: {
-  name: string;
-  children: ChoiceCount[];
-}) => {
+const getCirclePackedData = (
+  data: {
+    name: string;
+    children: ChoiceCount[];
+  },
+  onCircleClick: (choice: ChoiceCount) => void,
+) => {
   // Specify the chart’s dimensions.
   const width = window.innerWidth;
   const height = width;
@@ -60,7 +64,7 @@ const getCirclePackedData = (data: {
     .attr("fill", (d) =>
       d.children ? color(d.depth) : colors[colorIndex++ % colors.length],
     )
-    .attr("pointer-events", (d) => (!d.children ? "none" : null))
+    .attr("pointer-events", "auto")
     .on("mouseover", function () {
       d3.select(this).attr("stroke", "#000");
     })
@@ -69,7 +73,18 @@ const getCirclePackedData = (data: {
     })
     .on(
       "click",
-      (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()),
+      (event, d) => {
+        // If this is a leaf node (actual choice), trigger the side panel
+        if (!d.children && d.data.sub) {
+          console.log("Clicked on choice:", d.data);
+          onCircleClick(d.data);
+          event.stopPropagation();
+        } else if (focus !== d) {
+          // Only zoom if it's not a leaf node
+          zoom(event, d);
+          event.stopPropagation();
+        }
+      },
     );
 
   // Append the text labels.
@@ -168,15 +183,42 @@ export const ResultsViz = ({
   data: ChoiceCount[];
   className?: string;
 }) => {
+  const [selectedChoice, setSelectedChoice] = useState<ChoiceCount | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const totalVotes = data.reduce((sum, choice) => sum + choice.count, 0);
+
+  const handleCircleClick = (choice: ChoiceCount) => {
+    setSelectedChoice(choice);
+    setIsPanelOpen(true);
+  };
+
+  const handlePanelClose = () => {
+    setIsPanelOpen(false);
+  };
+
   useEffect(() => {
     d3.select("#chart").select("svg").remove();
 
     // append the svg object to the body of the page
-    getCirclePackedData({
-      name: "global",
-      children: data,
-    });
-  }, []);
+    getCirclePackedData(
+      {
+        name: "global",
+        children: data,
+      },
+      handleCircleClick,
+    );
+  }, [data]);
 
-  return <div id="chart" className={className}></div>;
+  return (
+    <>
+      <div id="chart" className={className}></div>
+      <VoteStatsPanel
+        isOpen={isPanelOpen}
+        onClose={handlePanelClose}
+        selectedChoice={selectedChoice}
+        totalVotes={totalVotes}
+      />
+    </>
+  );
 };
