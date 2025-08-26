@@ -6,8 +6,10 @@ const prisma = new PrismaClient();
 const randomIndex = (length) => Math.floor(Math.random() * (length - 1));
 
 async function main() {
-  const defaultGroup = await prisma.group.create({
-    data: {
+  const defaultGroup = await prisma.group.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
       id: "default",
     },
   });
@@ -67,8 +69,10 @@ async function main() {
     }),
   );
 
-  const neverItem = await prisma.item.create({
-    data: {
+  const neverItem = await prisma.item.upsert({
+    where: { id: "never" },
+    update: {},
+    create: {
       id: "never",
       title: "never",
       isSubjectOnly: false,

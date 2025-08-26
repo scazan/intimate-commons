@@ -55,6 +55,8 @@ model Choice {
   @@index([subId])
   @@index([sessionId])
   @@index([userId])
+  @@index([userId, sessionId])
+  @@index([sessionId, subId])
 }
 
 model User {
@@ -80,6 +82,8 @@ model Session {
   groupId    String
 
   @@index([userId])
+  @@index([groupId])
+  @@index([userId, groupId])
 }
 
 model Group {
@@ -105,6 +109,7 @@ model Story {
   @@index([groupId])
   @@index([mediaID])
   @@index([sessionId])
+  @@index([sessionId, created_at])
 }
 
 // GENERATORS
