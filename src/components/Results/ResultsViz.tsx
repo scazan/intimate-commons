@@ -77,6 +77,21 @@ const getCirclePackedData = (
         // If this is a leaf node (actual choice), trigger the side panel
         if (!d.children && d.data.sub) {
           console.log("Clicked on choice:", d.data);
+          
+          // Apply blur effect to all circles except the clicked one
+          node.style("filter", function(nodeData) {
+            return nodeData === d ? "none" : "blur(4px)";
+          });
+          
+          // Also blur the labels
+          label.style("filter", function(labelData) {
+            return labelData === d ? "none" : "blur(2px)";
+          });
+          
+          subLabel.style("filter", function(subLabelData) {
+            return subLabelData === d ? "none" : "blur(2px)";
+          });
+          
           onCircleClick(d.data);
           event.stopPropagation();
         } else if (focus !== d) {
@@ -195,6 +210,9 @@ export const ResultsViz = ({
 
   const handlePanelClose = () => {
     setIsPanelOpen(false);
+    // Remove blur effect from all circles when panel closes
+    d3.selectAll("#chart circle").style("filter", "none");
+    d3.selectAll("#chart text").style("filter", "none");
   };
 
   useEffect(() => {
