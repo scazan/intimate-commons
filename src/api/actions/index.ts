@@ -9,19 +9,31 @@ import { createUser as icCreateUser } from "@/lib/intimateCommons/services/user"
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { setGroupID } from "..";
+import { createUserSchema } from "@/lib/validation/schemas";
+import { ZodError } from "zod";
 
 export const createUser = async (data: FormData) => {
   "use server";
 
-  const formName = data.get("name") || "anonymous";
-  const name = formName.valueOf().toString();
+  try {
+    const formName = data.get("name") || "anonymous";
+    const name = formName.valueOf().toString();
 
-  const newUser = await icCreateUser(name);
+    // Validate the name using our schema
+    const validatedData = createUserSchema.parse({ name });
 
-  cookies().set("userId", newUser.id);
-  cookies().set("userName", newUser.name);
+    const newUser = await icCreateUser(validatedData.name);
 
-  return { id: newUser.id };
+    cookies().set("userId", newUser.id);
+    cookies().set("userName", newUser.name);
+
+    return { id: newUser.id };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new Error(`Validation failed: ${error.errors.map(e => e.message).join(", ")}`);
+    }
+    throw error;
+  }
 };
 
 export const verifyUserAndNavigate = async (groupTitle?: string) => {

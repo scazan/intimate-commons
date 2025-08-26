@@ -4,48 +4,100 @@ import { useRouter } from "next/navigation";
 import { RadioGroup, Button, Input } from "@/components/base/ui";
 import { Choice, Header2, Header3 } from "@/components";
 import { cn } from "@/lib/utils";
-import { Form, FormControl, FormField, FormItem } from "../base/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "../base/ui/form";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingCircle } from "../LoadingCircle";
+import { questionFormSchema, type QuestionFormData } from "@/lib/validation/schemas";
+import { apiCall, getErrorMessage, retryWithBackoff, APIError, NetworkError, ValidationError } from "@/lib/errors";
+import { useNetworkStatus } from "@/lib/hooks/useNetworkStatus";
 
-export const QuestionForm = ({ choices, sessionId, className }) => {
+interface QuestionFormProps {
+  choices: Array<{ id: string; title: string }>;
+  sessionId: string;
+  className?: string;
+}
+
+export const QuestionForm = ({ choices, sessionId, className }: QuestionFormProps) => {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isOnline = useNetworkStatus();
 
   const offset = step * 4;
   const subject = choices[offset];
   const choicesMade = [];
 
-  const handleNext = async (values) => {
+  const handleNext = async (values: QuestionFormData) => {
     const isCustom = values.object === "custom";
+    setIsSubmitting(true);
+    
+    // Clear any previous errors
+    form.clearErrors("root");
+
+    // Check if offline
+    if (!isOnline) {
+      form.setError("root", {
+        type: "manual",
+        message: "You're currently offline. Please check your internet connection and try again.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
     if (values.object !== "skip" && !(isCustom && !values.customInput)) {
       let objId = values.object;
 
       if (isCustom) {
-        objId = values.customInput;
+        objId = values.customInput!;
       }
 
-      fetch("/api/v1/choices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // semantic triple
-        body: JSON.stringify({
+      try {
+        await retryWithBackoff(async () => {
+          return await apiCall("/api/v1/choices", {
+            method: "POST",
+            body: JSON.stringify({
+              subId: subject.id,
+              objId,
+              isCustom,
+              sessionId,
+            }),
+          });
+        });
+
+        choicesMade.push({
           subId: subject.id,
           objId,
-          isCustom,
-          sessionId,
-        }),
-      });
+        });
+      } catch (error) {
+        console.error("Error submitting choice:", error);
+        
+        let errorMessage = getErrorMessage(error);
+        
+        // Provide more specific error messages
+        if (error instanceof NetworkError) {
+          errorMessage = "Connection failed. Please check your internet connection and try again.";
+        } else if (error instanceof ValidationError) {
+          errorMessage = "Please check your input and try again.";
+        } else if (error instanceof APIError) {
+          if (error.statusCode === 429) {
+            errorMessage = "Too many requests. Please wait a moment and try again.";
+          } else if (error.statusCode >= 500) {
+            errorMessage = "Server error. Please try again in a moment.";
+          }
+        }
 
-      choicesMade.push({
-        subId: subject.id,
-        objId,
-      });
+        form.setError("root", {
+          type: "manual",
+          message: errorMessage,
+        });
+        setIsSubmitting(false);
+        return;
+      }
     }
+
+    setIsSubmitting(false);
 
     if (step === 3) {
       const serializableChoices = choicesMade.reduce((accum, choice, i) => {
@@ -78,7 +130,7 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
     return false;
   };
 
-  const handlePrevious = (e) => {
+  const handlePrevious = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (step === 0) {
       return;
@@ -91,15 +143,11 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
     return false;
   };
 
-  let randomNumber = Math.random();
-
-  useEffect(() => {
-    randomNumber = Math.random();
-  }, [step]);
-
-  const form = useForm<any>({
+  const form = useForm<QuestionFormData>({
+    resolver: zodResolver(questionFormSchema),
     defaultValues: {
       object: "skip",
+      customInput: "",
     },
   });
 
@@ -143,7 +191,7 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
                       <FormField
                         control={form.control}
                         name="customInput"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem>
                             <FormControl>
                               <Input
@@ -155,12 +203,14 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
                                   const customInput =
                                     document.body.querySelector(
                                       "button[value=custom]",
-                                    );
-                                  // @ts-ignore
-                                  customInput.click();
+                                    ) as HTMLButtonElement;
+                                  customInput?.click();
                                 }}
                               />
                             </FormControl>
+                            {fieldState.error && (
+                              <FormMessage>{fieldState.error.message}</FormMessage>
+                            )}
                           </FormItem>
                         )}
                       />
@@ -171,6 +221,18 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
               </FormItem>
             )}
           />
+
+          {!isOnline && (
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 rounded text-sm mt-2">
+              ⚠️ You're currently offline. Please check your internet connection.
+            </div>
+          )}
+
+          {form.formState.errors.root && (
+            <div className="text-red-500 text-sm mt-2">
+              {form.formState.errors.root.message}
+            </div>
+          )}
 
           <div
             className={cn(
@@ -183,11 +245,16 @@ export const QuestionForm = ({ choices, sessionId, className }) => {
               type="button"
               onClick={handlePrevious}
               className={cn(step === 0 && "hidden")}
+              disabled={isSubmitting}
             >
               Previous
             </Button>
-            <Button variant="large" type="submit">
-              Next
+            <Button 
+              variant="large" 
+              type="submit" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Next"}
             </Button>
           </div>
         </form>
