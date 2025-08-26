@@ -53,7 +53,7 @@ export const getQuestions = async () => {
   return {
     userId,
     groupId: groupId,
-    choices: randomChoices,
+    choices: Array.isArray(randomChoices) ? randomChoices : [],
     sessionId: newSession.id,
   };
 };

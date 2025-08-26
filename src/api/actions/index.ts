@@ -30,7 +30,9 @@ export const createUser = async (data: FormData) => {
     return { id: newUser.id };
   } catch (error) {
     if (error instanceof ZodError) {
-      throw new Error(`Validation failed: ${error.errors.map(e => e.message).join(", ")}`);
+      throw new Error(
+        `Validation failed: ${error.errors.map((e) => e.message).join(", ")}`,
+      );
     }
     throw error;
   }

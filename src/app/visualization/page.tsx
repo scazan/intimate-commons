@@ -27,7 +27,7 @@ export default async ({ searchParams }) => {
       <div className="flex items-center justify-between">
         <Header2>Global</Header2>
         <Link href={`/results?sid=${sid}&gid=${gid || ""}`}>
-          <Button variant="outline" size="default">
+          <Button variant="default" size="default">
             Back to Results
           </Button>
         </Link>
