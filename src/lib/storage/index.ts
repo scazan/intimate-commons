@@ -30,6 +30,7 @@ export const uploadBufferToStorage = async ({
       Bucket: bucketName,
       Key: key,
       Body: buffer,
+      ContentType: 'audio/mpeg',
     };
 
     const command = new PutObjectCommand(params);

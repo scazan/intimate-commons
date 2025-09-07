@@ -99,7 +99,7 @@ export const generateOpenAIAudio = async (text: string): Promise<Buffer> => {
   ];
   const randomIndex = Math.floor(Math.random() * voices.length);
   const mp3 = await client.audio.speech.create({
-    model: "tts-1",
+    model: "gpt-4o-mini-tts",
     voice: voices[randomIndex],
     input: text,
   });
