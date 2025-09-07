@@ -133,19 +133,12 @@
         const nextBtn = document.getElementById('nextBtn');
         const playPauseBtn = document.getElementById('playPauseBtn');
 
-        // Regenerate and load playlist
+        // Load playlist dynamically
         async function loadPlaylist() {
             try {
-                // First, regenerate the playlist by calling the API
-                playlistContainer.innerHTML = '<div class="loading">Regenerating playlist...</div>';
+                playlistContainer.innerHTML = '<div class="loading">Loading playlist...</div>';
                 
-                const regenerateResponse = await fetch('/api/playlist');
-                if (!regenerateResponse.ok) {
-                    throw new Error('Failed to regenerate playlist');
-                }
-                
-                // Then load the updated playlist
-                const response = await fetch('/playlist.json');
+                const response = await fetch('/api/playlist-data');
                 if (!response.ok) {
                     throw new Error('Failed to load playlist');
                 }
