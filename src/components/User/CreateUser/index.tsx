@@ -9,10 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createUserSchema, type CreateUserData } from "@/lib/validation/schemas";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/base/ui/form";
 import { getErrorMessage } from "@/lib/errors";
+import { useRouter } from "next/navigation";
 
 export const CreateUser = () => {
   const [isTransitioning, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const form = useForm<CreateUserData>({
     resolver: zodResolver(createUserSchema),
@@ -28,6 +30,8 @@ export const CreateUser = () => {
         const formData = new FormData();
         formData.append("name", data.name);
         await createUser(formData);
+        // Navigate to questions after successful user creation
+        router.push("/questions");
       } catch (err) {
         console.error("Error creating user:", err);
         

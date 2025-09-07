@@ -4,7 +4,7 @@ import { getAllGroups } from "@/lib/intimateCommons";
 import { UserDetailRow, createStory } from "@/lib/intimateCommons/stories";
 import { Choice, Item, Story } from "@prisma/client";
 import { generateAudio, getNewItems } from "@/lib/ai/query";
-import { uploadBufferToStorage } from "@/lib/storage";
+import { uploadBufferToStorage, generatePlaylist } from "@/lib/storage";
 import { createUser as icCreateUser } from "@/lib/intimateCommons/services/user";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -16,6 +16,10 @@ export const createUser = async (data: FormData) => {
   "use server";
 
   try {
+    // Clear any existing user cookies to ensure fresh start
+    cookies().delete("userId");
+    cookies().delete("userName");
+    
     const formName = data.get("name") || "anonymous";
     const name = formName.valueOf().toString();
 
@@ -188,6 +192,14 @@ const generateStoryAudio = async (story: Story) => {
 
   console.log("Audio was Uploaded", `${story.id}.mp3`, result);
 
+  // Update playlist after new audio is uploaded
+  try {
+    await updatePlaylist();
+    console.log("Playlist updated after new audio upload");
+  } catch (error) {
+    console.error("Failed to update playlist after audio upload:", error);
+  }
+
   return story.id;
 };
 
@@ -216,4 +228,22 @@ const generateNewItemsForGroup = async (
       }),
     ),
   );
+};
+
+export const updatePlaylist = async () => {
+  "use server";
+  
+  try {
+    const playlist = await generatePlaylist('intimate-commons-prod');
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    
+    const publicPath = path.join(process.cwd(), 'public', 'playlist.json');
+    await fs.writeFile(publicPath, JSON.stringify(playlist, null, 2));
+    
+    return { success: true, message: 'Playlist updated successfully' };
+  } catch (error) {
+    console.error('Error updating playlist:', error);
+    return { success: false, error: 'Failed to update playlist' };
+  }
 };
