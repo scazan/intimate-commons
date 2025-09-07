@@ -48,15 +48,18 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [audio, setAudio] = useState(null);
   const [bgAudio, setBgAudio] = useState(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   const play = () => {
     if (!audio || !bgAudio) return;
 
-    audio.play();
-    audio.volume = 1;
+    if (audio.src) {
+      audio.play().catch(console.error);
+      audio.volume = 0.35;
+    }
 
-    bgAudio.play();
-    bgAudio.volume = 2;
+    bgAudio.play().catch(console.error);
+    bgAudio.volume = 1;
 
     setIsPlaying(true);
   };
@@ -65,9 +68,7 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!audio || !bgAudio) return;
 
     audio.pause();
-    audio.volume = 0;
     bgAudio.pause();
-    bgAudio.volume = 0;
 
     setIsPlaying(false);
   };
@@ -76,7 +77,7 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!audio) return;
 
     audio.src = src;
-    audio.volume = 1;
+    audio.volume = 0.35;
     audio.loop = playlist.length <= 1; // Only loop if single track
     audio.oncanplaythrough = () => {
       audio.play();
@@ -157,11 +158,16 @@ export const AudioPlayerProvider = ({ children }) => {
     loadInitialPlaylist();
 
     const bindTouchPlay = () => {
+      setHasUserInteracted(true);
       if (bgAudio) {
         bgAudio?.play();
-        window.removeEventListener("touchstart", bindTouchPlay);
-        window.removeEventListener("click", bindTouchPlay);
       }
+      // Also start playlist if it's loaded
+      if (audio && playlist.length > 0 && audio.src) {
+        audio.play().catch(console.error);
+      }
+      window.removeEventListener("touchstart", bindTouchPlay);
+      window.removeEventListener("click", bindTouchPlay);
     };
 
     window.addEventListener("touchstart", bindTouchPlay);
@@ -195,26 +201,18 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   }, [currentTrack, playlist]);
 
-  // Set up auto-start for playlist on user interaction
+  // Start playlist when it loads after user interaction
   useEffect(() => {
-    if (!audio || playlist.length === 0) return;
-
-    const startPlaylistOnInteraction = () => {
-      if (isPlaying && audio.src) {
-        audio.play().catch(console.error);
-      }
-      window.removeEventListener("touchstart", startPlaylistOnInteraction);
-      window.removeEventListener("click", startPlaylistOnInteraction);
-    };
-
-    window.addEventListener("touchstart", startPlaylistOnInteraction);
-    window.addEventListener("click", startPlaylistOnInteraction);
-
-    return () => {
-      window.removeEventListener("touchstart", startPlaylistOnInteraction);
-      window.removeEventListener("click", startPlaylistOnInteraction);
-    };
-  }, [audio, playlist.length, isPlaying]);
+    if (
+      hasUserInteracted &&
+      playlist.length > 0 &&
+      audio &&
+      audio.src &&
+      isPlaying
+    ) {
+      audio.play().catch(console.error);
+    }
+  }, [hasUserInteracted, playlist.length, audio?.src, isPlaying]);
 
   // Providing the state and functions to the child components
   return (
