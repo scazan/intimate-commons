@@ -13,6 +13,10 @@ export const useAudio = () => {
     }
   }, [src]);
 
+  const setPlaylist = (playlist) => {
+    context.setPlaylist(playlist);
+  };
+
   const AudioToggle = (
     <div
       onClick={() => context.setIsPlaying(!context.isPlaying)}
@@ -89,6 +93,12 @@ export const useAudio = () => {
   return {
     AudioToggle,
     setSrc,
+    setPlaylist,
+    regeneratePlaylist: context.regeneratePlaylist,
+    currentTrack: context.currentTrack,
+    playlist: context.playlist,
+    nextTrack: context.nextTrack,
+    prevTrack: context.prevTrack,
   };
 };
 

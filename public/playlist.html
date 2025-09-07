@@ -133,9 +133,18 @@
         const nextBtn = document.getElementById('nextBtn');
         const playPauseBtn = document.getElementById('playPauseBtn');
 
-        // Load playlist from JSON file
+        // Regenerate and load playlist
         async function loadPlaylist() {
             try {
+                // First, regenerate the playlist by calling the API
+                playlistContainer.innerHTML = '<div class="loading">Regenerating playlist...</div>';
+                
+                const regenerateResponse = await fetch('/api/playlist');
+                if (!regenerateResponse.ok) {
+                    throw new Error('Failed to regenerate playlist');
+                }
+                
+                // Then load the updated playlist
                 const response = await fetch('/playlist.json');
                 if (!response.ok) {
                     throw new Error('Failed to load playlist');
@@ -145,7 +154,7 @@
                 renderPlaylist();
             } catch (error) {
                 console.error('Error loading playlist:', error);
-                playlistContainer.innerHTML = '<div class="error">Failed to load playlist. Make sure to generate the playlist first by visiting /api/playlist</div>';
+                playlistContainer.innerHTML = '<div class="error">Failed to load playlist. Error: ' + error.message + '</div>';
             }
         }
 

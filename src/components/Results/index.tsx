@@ -11,6 +11,8 @@ export const Results = async ({ results }) => {
     <div className="flex flex-col gap-12">
       <AudioPlayer
         src={`https://pub-58753b13db894b5ea3d9730f9a15a537.r2.dev/${storyId}.mp3`}
+        usePlaylist={true}
+        regeneratePlaylist={true}
       />
       <Header2>Results</Header2>
       <ChoiceResults choices={results.user} />

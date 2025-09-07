@@ -1,6 +1,7 @@
 import { ChoiceResults } from "@/api/actions";
 import { getAIClient } from "./client";
 import { getAudio } from "./elevenLabs";
+import { playAudio } from "openai/helpers/audio";
 
 export const getItemSentiment = async (item: string) => {
   const client = getAIClient();

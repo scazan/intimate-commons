@@ -58,12 +58,12 @@ export const listAudioFiles = async (bucketName: string) => {
 
     // Filter for .mp3 files and return file info
     const audioFiles =
-      response.Contents?.filter((file) => file.Key?.endsWith(".mp3")).map(
+      response.Contents?.filter((file) => file.Key?.endsWith(".mp3"))?.map(
         (file) => ({
           key: file.Key,
           lastModified: file.LastModified,
           size: file.Size,
-          url: `https://pub-bd8c59c93bf74d13825de7e81e4cc08d.r2.dev/${file.Key}`, // Update with your R2 public URL
+          url: `https://pub-58753b13db894b5ea3d9730f9a15a537.r2.dev/${file.Key}`,
         }),
       ) || [];
 
@@ -78,11 +78,16 @@ export const listAudioFiles = async (bucketName: string) => {
 export const generatePlaylist = async (bucketName: string) => {
   const audioFiles = await listAudioFiles(bucketName);
 
+  // Sort by lastModified date (most recent first) and take only the last 10
+  const recentAudioFiles = audioFiles
+    .sort((a, b) => new Date(b.lastModified!).getTime() - new Date(a.lastModified!).getTime())
+    .slice(0, 10);
+
   const playlist = {
     name: "Intimate Commons Audio Stories",
-    description: "Generated playlist of all audio stories",
+    description: "Generated playlist of the 10 most recent audio stories",
     created: new Date().toISOString(),
-    tracks: audioFiles.map((file, index) => ({
+    tracks: recentAudioFiles.map((file, index) => ({
       id: index + 1,
       title: `Story ${file.key?.replace(".mp3", "")}`,
       url: file.url,

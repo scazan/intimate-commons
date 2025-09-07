@@ -19,7 +19,7 @@ export const createUser = async (data: FormData) => {
     // Clear any existing user cookies to ensure fresh start
     cookies().delete("userId");
     cookies().delete("userName");
-    
+
     const formName = data.get("name") || "anonymous";
     const name = formName.valueOf().toString();
 
@@ -232,18 +232,18 @@ const generateNewItemsForGroup = async (
 
 export const updatePlaylist = async () => {
   "use server";
-  
+
   try {
-    const playlist = await generatePlaylist('intimate-commons-prod');
-    const fs = await import('fs/promises');
-    const path = await import('path');
-    
-    const publicPath = path.join(process.cwd(), 'public', 'playlist.json');
+    const playlist = await generatePlaylist("intimate-commons-prod");
+    const fs = await import("fs/promises");
+    const path = await import("path");
+
+    const publicPath = path.join(process.cwd(), "public", "playlist.json");
     await fs.writeFile(publicPath, JSON.stringify(playlist, null, 2));
-    
-    return { success: true, message: 'Playlist updated successfully' };
+
+    return { success: true, message: "Playlist updated successfully" };
   } catch (error) {
-    console.error('Error updating playlist:', error);
-    return { success: false, error: 'Failed to update playlist' };
+    console.error("Error updating playlist:", error);
+    return { success: false, error: "Failed to update playlist" };
   }
 };
