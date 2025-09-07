@@ -9,19 +9,19 @@ import {
 
 // Creating the context
 export const AudioPlayerContext = createContext({
-  play: () => { },
-  pause: () => { },
+  play: () => {},
+  pause: () => {},
   audio: null,
   bgAudio: null,
   isPlaying: true,
-  setIsPlaying: (should: boolean) => { },
-  setSrc: (src: string) => { },
-  setPlaylist: (playlist: any[]) => { },
-  regeneratePlaylist: () => { },
+  setIsPlaying: (should: boolean) => {},
+  setSrc: (src: string) => {},
+  setPlaylist: (playlist: any[]) => {},
+  regeneratePlaylist: () => {},
   currentTrack: 0,
   playlist: [],
-  nextTrack: () => { },
-  prevTrack: () => { },
+  nextTrack: () => {},
+  prevTrack: () => {},
 });
 const DispatchContext = createContext({});
 
@@ -55,7 +55,7 @@ export const AudioPlayerProvider = ({ children }) => {
 
     if (audio.src) {
       audio.play().catch(console.error);
-      audio.volume = 0.35;
+      audio.volume = 0.7;
     }
 
     bgAudio.play().catch(console.error);
@@ -77,7 +77,7 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!audio) return;
 
     audio.src = src;
-    audio.volume = 0.35;
+    audio.volume = 0.7;
     audio.loop = playlist.length <= 1; // Only loop if single track
     audio.oncanplaythrough = () => {
       audio.play();
