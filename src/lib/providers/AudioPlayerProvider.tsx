@@ -91,7 +91,12 @@ export const AudioPlayerProvider = ({ children }) => {
 
   const regeneratePlaylist = async () => {
     try {
-      const response = await fetch("/api/playlist-data");
+      const response = await fetch(`/api/playlist-data?t=${Date.now()}`, {
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
       const playlistData = await response.json();
 
       if (playlistData.tracks && playlistData.tracks.length > 0) {
@@ -143,7 +148,12 @@ export const AudioPlayerProvider = ({ children }) => {
     // Load playlist on app start
     const loadInitialPlaylist = async () => {
       try {
-        const response = await fetch("/api/playlist-data");
+        const response = await fetch(`/api/playlist-data?t=${Date.now()}`, {
+          cache: 'no-cache',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         const playlistData = await response.json();
 
         if (playlistData.tracks && playlistData.tracks.length > 0) {

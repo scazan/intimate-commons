@@ -138,7 +138,12 @@
             try {
                 playlistContainer.innerHTML = '<div class="loading">Loading playlist...</div>';
                 
-                const response = await fetch('/api/playlist-data');
+                const response = await fetch(`/api/playlist-data?t=${Date.now()}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
                 if (!response.ok) {
                     throw new Error('Failed to load playlist');
                 }
