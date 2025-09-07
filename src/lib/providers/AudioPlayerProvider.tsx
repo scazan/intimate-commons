@@ -9,19 +9,19 @@ import {
 
 // Creating the context
 export const AudioPlayerContext = createContext({
-  play: () => {},
-  pause: () => {},
+  play: () => { },
+  pause: () => { },
   audio: null,
   bgAudio: null,
   isPlaying: true,
-  setIsPlaying: (should: boolean) => {},
-  setSrc: (src: string) => {},
-  setPlaylist: (playlist: any[]) => {},
-  regeneratePlaylist: () => {},
+  setIsPlaying: (should: boolean) => { },
+  setSrc: (src: string) => { },
+  setPlaylist: (playlist: any[]) => { },
+  regeneratePlaylist: () => { },
   currentTrack: 0,
   playlist: [],
-  nextTrack: () => {},
-  prevTrack: () => {},
+  nextTrack: () => { },
+  prevTrack: () => { },
 });
 const DispatchContext = createContext({});
 
@@ -91,11 +91,11 @@ export const AudioPlayerProvider = ({ children }) => {
 
   const regeneratePlaylist = async () => {
     try {
-      const response = await fetch(`/api/playlist-data?t=${Date.now()}`, {
-        cache: 'no-cache',
+      const response = await fetch(`/api/playlist-data/${Date.now()}`, {
+        cache: "no-cache",
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          "Cache-Control": "no-cache",
+        },
       });
       const playlistData = await response.json();
 
@@ -148,11 +148,11 @@ export const AudioPlayerProvider = ({ children }) => {
     // Load playlist on app start
     const loadInitialPlaylist = async () => {
       try {
-        const response = await fetch(`/api/playlist-data?t=${Date.now()}`, {
-          cache: 'no-cache',
+        const response = await fetch(`/api/playlist-data/${Date.now()}`, {
+          cache: "no-cache",
           headers: {
-            'Cache-Control': 'no-cache'
-          }
+            "Cache-Control": "no-cache",
+          },
         });
         const playlistData = await response.json();
 

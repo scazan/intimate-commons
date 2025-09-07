@@ -1,254 +1,279 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intimate Commons Audio Playlist</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .player {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .current-track {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .current-track h2 {
-            color: #333;
-            margin: 0 0 10px 0;
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            background: #007cba;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #005a8b;
-        }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .playlist {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .playlist h3 {
-            padding: 15px;
-            margin: 0;
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .track {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .track:hover {
-            background-color: #f8f9fa;
-        }
-        .track.playing {
-            background-color: #e7f3ff;
-            border-left: 4px solid #007cba;
-        }
-        .track-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .track-info {
-            font-size: 0.9em;
-            color: #666;
-        }
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        .error {
-            text-align: center;
-            padding: 40px;
-            color: #d32f2f;
-            background: #ffebee;
-            border-radius: 4px;
-        }
-        audio {
-            width: 100%;
-            margin: 10px 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intimate Commons Audio Playlist</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .player {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .current-track {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .current-track h2 {
+      color: #333;
+      margin: 0 0 10px 0;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background: #007cba;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #005a8b;
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .playlist {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .playlist h3 {
+      padding: 15px;
+      margin: 0;
+      background: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .track {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .track:hover {
+      background-color: #f8f9fa;
+    }
+
+    .track.playing {
+      background-color: #e7f3ff;
+      border-left: 4px solid #007cba;
+    }
+
+    .track-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .track-info {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .error {
+      text-align: center;
+      padding: 40px;
+      color: #d32f2f;
+      background: #ffebee;
+      border-radius: 4px;
+    }
+
+    audio {
+      width: 100%;
+      margin: 10px 0;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="player">
-        <div class="current-track">
-            <h2 id="currentTitle">Select a track to play</h2>
-        </div>
-        
-        <audio id="audioPlayer" controls style="width: 100%;">
-            Your browser does not support the audio element.
-        </audio>
-        
-        <div class="controls">
-            <button id="prevBtn">Previous</button>
-            <button id="playPauseBtn">Play</button>
-            <button id="nextBtn">Next</button>
-        </div>
+  <div class="player">
+    <div class="current-track">
+      <h2 id="currentTitle">Select a track to play</h2>
     </div>
 
-    <div class="playlist">
-        <h3>Audio Stories Playlist</h3>
-        <div id="playlistContainer">
-            <div class="loading">Loading playlist...</div>
-        </div>
+    <audio id="audioPlayer" controls style="width: 100%">
+      Your browser does not support the audio element.
+    </audio>
+
+    <div class="controls">
+      <button id="prevBtn">Previous</button>
+      <button id="playPauseBtn">Play</button>
+      <button id="nextBtn">Next</button>
     </div>
+  </div>
 
-    <script>
-        let playlist = [];
-        let currentTrackIndex = -1;
-        const audioPlayer = document.getElementById('audioPlayer');
-        const currentTitle = document.getElementById('currentTitle');
-        const playlistContainer = document.getElementById('playlistContainer');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const playPauseBtn = document.getElementById('playPauseBtn');
+  <div class="playlist">
+    <h3>Audio Stories Playlist</h3>
+    <div id="playlistContainer">
+      <div class="loading">Loading playlist...</div>
+    </div>
+  </div>
 
-        // Load playlist dynamically
-        async function loadPlaylist() {
-            try {
-                playlistContainer.innerHTML = '<div class="loading">Loading playlist...</div>';
-                
-                const response = await fetch(`/api/playlist-data?t=${Date.now()}`, {
-                    cache: 'no-cache',
-                    headers: {
-                        'Cache-Control': 'no-cache'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to load playlist');
-                }
-                const data = await response.json();
-                playlist = data.tracks || [];
-                renderPlaylist();
-            } catch (error) {
-                console.error('Error loading playlist:', error);
-                playlistContainer.innerHTML = '<div class="error">Failed to load playlist. Error: ' + error.message + '</div>';
-            }
+  <script>
+    let playlist = [];
+    let currentTrackIndex = -1;
+    const audioPlayer = document.getElementById("audioPlayer");
+    const currentTitle = document.getElementById("currentTitle");
+    const playlistContainer = document.getElementById("playlistContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+
+    // Load playlist dynamically
+    async function loadPlaylist() {
+      try {
+        playlistContainer.innerHTML =
+          '<div class="loading">Loading playlist...</div>';
+
+        const response = await fetch(`/api/playlist-data/${Date.now()}`, {
+          cache: "no-cache",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to load playlist");
         }
+        const data = await response.json();
+        playlist = data.tracks || [];
+        renderPlaylist();
+      } catch (error) {
+        console.error("Error loading playlist:", error);
+        playlistContainer.innerHTML =
+          '<div class="error">Failed to load playlist. Error: ' +
+          error.message +
+          "</div>";
+      }
+    }
 
-        // Render playlist in the UI
-        function renderPlaylist() {
-            if (playlist.length === 0) {
-                playlistContainer.innerHTML = '<div class="error">No tracks found. Make sure audio files exist in the bucket.</div>';
-                return;
-            }
+    // Render playlist in the UI
+    function renderPlaylist() {
+      if (playlist.length === 0) {
+        playlistContainer.innerHTML =
+          '<div class="error">No tracks found. Make sure audio files exist in the bucket.</div>';
+        return;
+      }
 
-            playlistContainer.innerHTML = '';
-            playlist.forEach((track, index) => {
-                const trackElement = document.createElement('div');
-                trackElement.className = 'track';
-                trackElement.innerHTML = `
+      playlistContainer.innerHTML = "";
+      playlist.forEach((track, index) => {
+        const trackElement = document.createElement("div");
+        trackElement.className = "track";
+        trackElement.innerHTML = `
                     <div class="track-title">${track.title}</div>
                     <div class="track-info">Track ${track.id}</div>
                 `;
-                trackElement.addEventListener('click', () => playTrack(index));
-                playlistContainer.appendChild(trackElement);
-            });
+        trackElement.addEventListener("click", () => playTrack(index));
+        playlistContainer.appendChild(trackElement);
+      });
+    }
+
+    // Play a specific track
+    function playTrack(index) {
+      if (index < 0 || index >= playlist.length) return;
+
+      // Update UI
+      document.querySelectorAll(".track").forEach((el, i) => {
+        el.classList.toggle("playing", i === index);
+      });
+
+      currentTrackIndex = index;
+      const track = playlist[index];
+      currentTitle.textContent = track.title;
+      audioPlayer.src = track.url;
+      audioPlayer.play();
+      updateButtons();
+    }
+
+    // Play/pause toggle
+    function togglePlayPause() {
+      if (audioPlayer.paused) {
+        if (currentTrackIndex === -1 && playlist.length > 0) {
+          playTrack(0);
+        } else {
+          audioPlayer.play();
         }
+      } else {
+        audioPlayer.pause();
+      }
+    }
 
-        // Play a specific track
-        function playTrack(index) {
-            if (index < 0 || index >= playlist.length) return;
-            
-            // Update UI
-            document.querySelectorAll('.track').forEach((el, i) => {
-                el.classList.toggle('playing', i === index);
-            });
+    // Previous track
+    function previousTrack() {
+      if (currentTrackIndex > 0) {
+        playTrack(currentTrackIndex - 1);
+      }
+    }
 
-            currentTrackIndex = index;
-            const track = playlist[index];
-            currentTitle.textContent = track.title;
-            audioPlayer.src = track.url;
-            audioPlayer.play();
-            updateButtons();
-        }
+    // Next track
+    function nextTrack() {
+      if (currentTrackIndex < playlist.length - 1) {
+        playTrack(currentTrackIndex + 1);
+      }
+    }
 
-        // Play/pause toggle
-        function togglePlayPause() {
-            if (audioPlayer.paused) {
-                if (currentTrackIndex === -1 && playlist.length > 0) {
-                    playTrack(0);
-                } else {
-                    audioPlayer.play();
-                }
-            } else {
-                audioPlayer.pause();
-            }
-        }
+    // Update button states
+    function updateButtons() {
+      prevBtn.disabled = currentTrackIndex <= 0;
+      nextBtn.disabled = currentTrackIndex >= playlist.length - 1;
+    }
 
-        // Previous track
-        function previousTrack() {
-            if (currentTrackIndex > 0) {
-                playTrack(currentTrackIndex - 1);
-            }
-        }
+    // Event listeners
+    playPauseBtn.addEventListener("click", togglePlayPause);
+    prevBtn.addEventListener("click", previousTrack);
+    nextBtn.addEventListener("click", nextTrack);
 
-        // Next track
-        function nextTrack() {
-            if (currentTrackIndex < playlist.length - 1) {
-                playTrack(currentTrackIndex + 1);
-            }
-        }
+    // Audio player event listeners
+    audioPlayer.addEventListener("play", () => {
+      playPauseBtn.textContent = "Pause";
+    });
 
-        // Update button states
-        function updateButtons() {
-            prevBtn.disabled = currentTrackIndex <= 0;
-            nextBtn.disabled = currentTrackIndex >= playlist.length - 1;
-        }
+    audioPlayer.addEventListener("pause", () => {
+      playPauseBtn.textContent = "Play";
+    });
 
-        // Event listeners
-        playPauseBtn.addEventListener('click', togglePlayPause);
-        prevBtn.addEventListener('click', previousTrack);
-        nextBtn.addEventListener('click', nextTrack);
+    audioPlayer.addEventListener("ended", () => {
+      // Auto-play next track
+      if (currentTrackIndex < playlist.length - 1) {
+        nextTrack();
+      }
+    });
 
-        // Audio player event listeners
-        audioPlayer.addEventListener('play', () => {
-            playPauseBtn.textContent = 'Pause';
-        });
-
-        audioPlayer.addEventListener('pause', () => {
-            playPauseBtn.textContent = 'Play';
-        });
-
-        audioPlayer.addEventListener('ended', () => {
-            // Auto-play next track
-            if (currentTrackIndex < playlist.length - 1) {
-                nextTrack();
-            }
-        });
-
-        // Load playlist on page load
-        loadPlaylist();
-    </script>
+    // Load playlist on page load
+    loadPlaylist();
+  </script>
 </body>
+
 </html>
