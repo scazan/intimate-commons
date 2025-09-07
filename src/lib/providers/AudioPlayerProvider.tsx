@@ -105,6 +105,9 @@ export const AudioPlayerProvider = ({ children }) => {
   const nextTrack = () => {
     if (currentTrack < playlist.length - 1) {
       setCurrentTrack((prev) => prev + 1);
+    } else {
+      // Loop back to the first track
+      setCurrentTrack(0);
     }
   };
 
@@ -175,9 +178,7 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!audio || playlist.length <= 1) return;
 
     const handleTrackEnd = () => {
-      if (currentTrack < playlist.length - 1) {
-        nextTrack();
-      }
+      nextTrack(); // Always advance to next track (will loop back to 0 if at end)
     };
 
     audio.addEventListener("ended", handleTrackEnd);

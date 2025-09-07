@@ -12,7 +12,6 @@ export const getAIClient = () => {
   }
 
   aiClient = new OpenAI({
-    baseURL: `${baseURL}/openai`,
     organization,
     apiKey,
   });
