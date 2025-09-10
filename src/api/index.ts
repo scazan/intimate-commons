@@ -6,16 +6,17 @@ import { createUser } from "@/lib/intimateCommons/services/user";
 
 export const setGroupID = async (groupTitle: string) => {
   // if there was no cookie for a group, use the default group
+  const targetGroupId = groupTitle || "default";
+  
   const groupRecord = await prisma.group.findFirst({
-    where: { ...(groupTitle ? { id: groupTitle } : { id: "default" }) },
+    where: { id: targetGroupId },
   });
 
-  // if we didn't find it by ID, search by title
+  // if we didn't find it by ID, create the default group
   if (!groupRecord) {
-    // if there was no group by title or id then create one
     const newGroupRecord = await prisma.group.create({
       data: {
-        id: groupTitle,
+        id: "default",
       },
     });
 
