@@ -8,8 +8,11 @@ import { Suspense } from "react";
 import Link from "next/link";
 
 export default async ({ searchParams }) => {
-  const { value: userId } = cookies().get("userId") || {};
-  const { value: groupId } = cookies().get("groupId") || {};
+  const userIdCookie = cookies().get("userId");
+  const groupIdCookie = cookies().get("groupId");
+  
+  const userId = userIdCookie?.value;
+  const groupId = groupIdCookie?.value;
   const { sid, gid } = searchParams;
 
   if (!userId) {

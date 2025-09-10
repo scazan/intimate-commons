@@ -25,8 +25,11 @@ export const setGroupID = async (groupTitle: string) => {
 };
 
 export const getQuestions = async () => {
-  const { value: userId } = cookies().get("userId") || {};
-  const { value: groupId } = cookies().get("groupId") || {};
+  const userIdCookie = cookies().get("userId");
+  const groupIdCookie = cookies().get("groupId");
+  
+  const userId = userIdCookie?.value;
+  const groupId = groupIdCookie?.value;
 
   const randomChoices =
     await prisma.$queryRaw`SELECT "Item".id, "Item"."groupId", "Item"."title", "Item"."isUserDefined", "Item"."isSubjectOnly", "Item".sentiment
@@ -61,7 +64,8 @@ export const getQuestions = async () => {
 // based in a semantic triple
 // SUBJECT ---predicate: "would share in exchange for"---> OBJECT
 export const addChoice = async ({ subId, objId, sessionId }) => {
-  const { value: userId } = cookies().get("userId") || {};
+  const userIdCookie = cookies().get("userId");
+  const userId = userIdCookie?.value;
 
   console.log(sessionId, "-", userId, "would trade", subId, "for", objId);
 
@@ -105,7 +109,8 @@ export const addItem = async ({ title, groupId }) => {
 };
 
 export const getChoiceCounts = async () => {
-  const { value: userId } = cookies().get("userId") || {};
+  const userIdCookie = cookies().get("userId");
+  const userId = userIdCookie?.value;
 
   // const objectCounts = await prisma.$queryRaw`
   // SELECT objItems.title as ObjectTitle, subItems.title as SubTitle, Count(*)

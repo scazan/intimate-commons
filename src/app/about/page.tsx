@@ -2,8 +2,11 @@ import { Header2 } from "@/components";
 import { cookies } from "next/headers";
 
 export default async () => {
-  const userId = cookies().get("userId");
-  const userName = cookies().get("userName");
+  const userIdCookie = cookies().get("userId");
+  const userNameCookie = cookies().get("userName");
+  
+  const userId = userIdCookie?.value;
+  const userName = userNameCookie?.value;
 
   return (
     <div className="sm:max-w-7xl flex min-h-screen flex-col items-center justify-between p-4 font-extralight font-serif text-[2rem] leading-[2.575rem] pb-32">

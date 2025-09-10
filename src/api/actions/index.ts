@@ -44,9 +44,13 @@ export const createUser = async (data: FormData) => {
 
 export const verifyUserAndNavigate = async (groupTitle?: string) => {
   "use server";
-  const { value: userId } = cookies().get("userId") || {};
-  const { value: userName } = cookies().get("userName") || {};
-  const { value: groupIdCookie } = cookies().get("groupId") || {};
+  const userIdCookie = cookies().get("userId");
+  const userNameCookie = cookies().get("userName");
+  const groupIdCookieObj = cookies().get("groupId");
+  
+  const userId = userIdCookie?.value;
+  const userName = userNameCookie?.value;
+  const groupIdCookie = groupIdCookieObj?.value;
 
   const currentUser = await prisma.user.findUnique({ where: { id: userId } });
 
