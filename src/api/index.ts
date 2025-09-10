@@ -2,6 +2,7 @@
 import { getItemSentiment } from "@/lib/ai/query";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { createUser } from "@/lib/intimateCommons/services/user";
 
 export const setGroupID = async (groupTitle: string) => {
   // if there was no cookie for a group, use the default group
@@ -27,16 +28,29 @@ export const setGroupID = async (groupTitle: string) => {
 export const getQuestions = async () => {
   const userIdCookie = cookies().get("userId");
   const groupIdCookie = cookies().get("groupId");
-  
-  const userId = userIdCookie?.value;
-  const groupId = groupIdCookie?.value;
+
+  let userId = userIdCookie?.value;
+  const groupId = groupIdCookie?.value || "default";
+
+  // If no userId, create an anonymous user
+  if (!userId) {
+    const newUser = await createUser("anonymous");
+    userId = newUser.id;
+
+    // Set the cookie for future requests
+    cookies().set("userId", userId);
+    cookies().set("userName", newUser.name);
+  }
+
+  // Ensure we have a valid groupId by setting it if not present
+  const finalGroupId = await setGroupID(groupId);
 
   const randomChoices =
     await prisma.$queryRaw`SELECT "Item".id, "Item"."groupId", "Item"."title", "Item"."isUserDefined", "Item"."isSubjectOnly", "Item".sentiment
     FROM "Item"
     LEFT JOIN "Group" ON "Group".id = "Item"."groupId"
     WHERE ("Group".id IS NULL
-    OR "Group".id = '${groupId}')
+    OR "Group".id = ${finalGroupId})
     AND "Item".title != 'never'
 
     ORDER BY random()
@@ -48,14 +62,14 @@ export const getQuestions = async () => {
         connect: { id: userId },
       },
       group: {
-        connect: { id: groupId },
+        connect: { id: finalGroupId },
       },
     },
   });
 
   return {
     userId,
-    groupId: groupId,
+    groupId: finalGroupId,
     choices: Array.isArray(randomChoices) ? randomChoices : [],
     sessionId: newSession.id,
   };
