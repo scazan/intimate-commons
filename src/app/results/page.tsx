@@ -8,7 +8,7 @@ import { Suspense } from "react";
 export default async ({ searchParams }) => {
   const userIdCookie = cookies().get("userId");
   const groupIdCookie = cookies().get("groupId");
-  
+
   const userId = userIdCookie?.value;
   const groupId = groupIdCookie?.value;
   const { sid, gid } = searchParams;
@@ -24,10 +24,8 @@ export default async ({ searchParams }) => {
   });
 
   return (
-    <>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Results results={results} />
-      </Suspense>
-    </>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Results results={results} />
+    </Suspense>
   );
 };

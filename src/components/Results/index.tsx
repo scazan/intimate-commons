@@ -19,15 +19,6 @@ export const Results = async ({ results }) => {
 
       <div className="flex items-center justify-between">
         <Header2>Global</Header2>
-        <Link
-          href={`/visualization?sid=${results.story.sessionId}&gid=${
-            results.story.groupId || ""
-          }`}
-        >
-          <Button variant="default" size="default">
-            Visualization
-          </Button>
-        </Link>
       </div>
 
       <ChoiceResults choices={results.global} global />
