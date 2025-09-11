@@ -119,14 +119,7 @@ export const QuestionForm = ({ choices, sessionId, className }: QuestionFormProp
     setStep((step) => step + 1);
 
     form.setValue("customInput", "");
-    form.setValue("object", "skip");
-    form.reset();
-    // bit of a hack as react-form is not clearing the input state on the component itself
-    const buttons = document.querySelectorAll("button");
-    buttons.forEach((button) => {
-      button.dataset.state = "";
-      button.ariaChecked = "false";
-    });
+    form.setValue("object", "");
     return false;
   };
 
@@ -146,7 +139,7 @@ export const QuestionForm = ({ choices, sessionId, className }: QuestionFormProp
   const form = useForm<QuestionFormData>({
     resolver: zodResolver(questionFormSchema),
     defaultValues: {
-      object: "skip",
+      object: "",
       customInput: "",
     },
   });
@@ -154,7 +147,7 @@ export const QuestionForm = ({ choices, sessionId, className }: QuestionFormProp
   useEffect(() => {
     if (form.formState.isSubmitSuccessful) {
       form.setValue("customInput", "");
-      form.reset({ object: "skip" });
+      form.setValue("object", "");
     }
   }, [form.formState]);
 
@@ -176,8 +169,9 @@ export const QuestionForm = ({ choices, sessionId, className }: QuestionFormProp
               <FormItem>
                 <FormControl>
                   <RadioGroup
+                    key={step}
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                   >
                     {choices.slice(offset + 1, offset + 3).map((choice) => (
                       <Choice

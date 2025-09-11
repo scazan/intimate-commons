@@ -5,6 +5,16 @@ import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 
 export const ChoiceResults = ({ choices, className = null, ...props }) => {
+  if (choices.length === 0) {
+    return (
+      <div className={cn("flex flex-col gap-12 max-w-2xl", className)}>
+        <div className="text-[1.5rem] font-extralight font-serif text-gray-500">
+          No choices with community participation found.
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className={cn("flex flex-col gap-12 max-w-2xl", className)}>
       {choices.map((choice) => (
