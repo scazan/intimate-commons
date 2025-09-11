@@ -95,6 +95,8 @@ const getComputedResults = (globalResults, userResults, userCount) => {
 };
 
 export const getResults = async ({ userId, sessionId, groupId }) => {
+  // Ensure we always have a groupId, default to "default"
+  const finalGroupId = groupId || "default";
   const userResultsDetails = (await prisma.$queryRaw`SELECT 
   c.id AS choice_id,
     c."userId",
@@ -125,7 +127,7 @@ export const getResults = async ({ userId, sessionId, groupId }) => {
           obj: true,
         },
       }),
-      getAllGroups(groupId),
+      getAllGroups(finalGroupId),
       prisma.story.findFirst({
         where: {
           sessionId,
@@ -168,7 +170,7 @@ export const getResults = async ({ userId, sessionId, groupId }) => {
   // waitUntil(
   await generateStoryAudio(newStory);
   // );
-  await generateNewItemsForGroup(groupId, userResults);
+  await generateNewItemsForGroup(finalGroupId, userResults);
 
   const { global, user } = getComputedResults(
     globalResults,
