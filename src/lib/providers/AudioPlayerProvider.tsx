@@ -197,7 +197,10 @@ export const AudioPlayerProvider = ({ children }) => {
       // Add random delay between 3-5 seconds before advancing to next track
       const delay = Math.random() * 2000 + 3000; // Random between 3000-5000ms
       setTimeout(() => {
-        nextTrack(); // Always advance to next track (will loop back to 0 if at end)
+        setCurrentTrack((prev) => {
+          const next = prev < playlist.length - 1 ? prev + 1 : 0;
+          return next;
+        });
       }, delay);
     };
 
@@ -206,7 +209,7 @@ export const AudioPlayerProvider = ({ children }) => {
     return () => {
       audio.removeEventListener("ended", handleTrackEnd);
     };
-  }, [audio, currentTrack, playlist.length]);
+  }, [audio, playlist.length]);
 
   // Update track when currentTrack or playlist changes
   useEffect(() => {
