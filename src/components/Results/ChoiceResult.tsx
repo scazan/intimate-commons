@@ -14,7 +14,7 @@ export const ChoiceResults = ({ choices, className = null, ...props }) => {
       </div>
     );
   }
-  
+
   return (
     <div className={cn("flex flex-col gap-12 max-w-2xl", className)}>
       {choices.map((choice) => (
@@ -35,7 +35,7 @@ export const ChoiceResult = ({ choice, global = false }) => {
 
   if (isNever) {
     text = !global ? (
-      <div className="text-[2rem] font-extralight font-serif">
+      <div className="text-[2rem] font-extralight font-serif text-blueText">
         I would{" "}
         <span className="font-sans font-extralight uppercase">
           {choice.obj.title}
@@ -46,7 +46,7 @@ export const ChoiceResult = ({ choice, global = false }) => {
         </span>
       </div>
     ) : (
-      <div className="text-[2rem] font-extralight font-serif">
+      <div className="text-[2rem] font-extralight font-serif text-blueText">
         Others that would{" "}
         <span className="font-sans font-extralight uppercase">
           {choice.obj.title}

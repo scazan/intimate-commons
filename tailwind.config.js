@@ -39,6 +39,7 @@ module.exports = {
         },
       },
       colors: {
+        blueText: "hsl(var(--blue))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -102,7 +103,7 @@ module.exports = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    plugin(function(helpers) {
+    plugin(function (helpers) {
       // variants that help styling Radix-UI components
       dataStateVariant("open", helpers);
       dataStateVariant("closed", helpers);
