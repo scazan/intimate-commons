@@ -110,6 +110,9 @@ export const generateOpenAIAudio = async (text: string): Promise<Buffer> => {
     model: "gpt-4o-mini-tts",
     voice: voices[randomIndex],
     input: text,
+    instructions:
+      "Speak calmy. You are like a radio host telling a story calmly with music in the background.",
+    response_format: "wav",
   });
 
   const buffer = Buffer.from(await mp3.arrayBuffer());
@@ -120,7 +123,6 @@ export const generateOpenAIAudio = async (text: string): Promise<Buffer> => {
 export const generateElevenAudio = async (text: string): Promise<Buffer> => {
   const buffer = await getAudio(text);
 
-  console.log("AUDIO", buffer);
   // const buffer = Buffer.from(await mp3.arrayBuffer());
 
   return buffer;

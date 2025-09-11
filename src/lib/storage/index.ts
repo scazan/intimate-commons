@@ -58,7 +58,7 @@ export const listAudioFiles = async (bucketName: string) => {
 
     // Filter for .mp3 files and return file info
     const audioFiles =
-      response.Contents?.filter((file) => file.Key?.endsWith(".mp3"))?.map(
+      response.Contents?.filter((file) => file.Key?.endsWith(".wav"))?.map(
         (file) => ({
           key: file.Key,
           lastModified: file.LastModified,
@@ -80,7 +80,11 @@ export const generatePlaylist = async (bucketName: string) => {
 
   // Sort by lastModified date (most recent first) and take only the last 10
   const recentAudioFiles = audioFiles
-    .sort((a, b) => new Date(b.lastModified!).getTime() - new Date(a.lastModified!).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.lastModified!).getTime() -
+        new Date(a.lastModified!).getTime(),
+    )
     .slice(0, 10);
 
   const playlist = {
@@ -89,7 +93,7 @@ export const generatePlaylist = async (bucketName: string) => {
     created: new Date().toISOString(),
     tracks: recentAudioFiles.map((file, index) => ({
       id: index + 1,
-      title: `Story ${file.key?.replace(".mp3", "")}`,
+      title: `Story ${file.key?.replace(".wav", "")}`,
       url: file.url,
       duration: null, // Could be determined if needed
       lastModified: file.lastModified,

@@ -2,16 +2,21 @@
 import { useAudio } from "@/lib/providers/hooks/useAudio";
 import { useEffect, useState } from "react";
 
-export const AudioPlayer = ({ 
-  src, 
-  usePlaylist = false, 
-  regeneratePlaylist = false 
-}: { 
-  src?: string; 
+export const AudioPlayer = ({
+  src,
+  usePlaylist = false,
+  regeneratePlaylist = false,
+}: {
+  src?: string;
   usePlaylist?: boolean;
   regeneratePlaylist?: boolean;
 }) => {
-  const { AudioToggle, setSrc, setPlaylist, regeneratePlaylist: regeneratePlaylistFn } = useAudio();
+  const {
+    AudioToggle,
+    setSrc,
+    setPlaylist,
+    regeneratePlaylist: regeneratePlaylistFn,
+  } = useAudio();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -23,7 +28,7 @@ export const AudioPlayer = ({
             setIsLoading(true);
             await regeneratePlaylistFn();
           } catch (error) {
-            console.error('Error regenerating playlist:', error);
+            console.error("Error regenerating playlist:", error);
             if (src) {
               setSrc(src);
             }
@@ -31,7 +36,7 @@ export const AudioPlayer = ({
             setIsLoading(false);
           }
         };
-        
+
         regenerateAndSet();
       }
       // If not regenerating, the playlist should already be loaded from app startup

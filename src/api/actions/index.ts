@@ -47,7 +47,7 @@ export const verifyUserAndNavigate = async (groupTitle?: string) => {
   const userIdCookie = cookies().get("userId");
   const userNameCookie = cookies().get("userName");
   const groupIdCookieObj = cookies().get("groupId");
-  
+
   const userId = userIdCookie?.value;
   const userName = userNameCookie?.value;
   const groupIdCookie = groupIdCookieObj?.value;
@@ -193,10 +193,10 @@ const generateStoryAudio = async (story: Story) => {
   const result = await uploadBufferToStorage({
     buffer: audioBuffer,
     bucketName: "intimate-commons-prod",
-    key: `${story.id}.mp3`,
+    key: `${story.id}.wav`,
   });
 
-  console.log("Audio was Uploaded", `${story.id}.mp3`, result);
+  console.log("Audio was Uploaded", `${story.id}.wav`, result);
 
   // Update playlist after new audio is uploaded
   try {
