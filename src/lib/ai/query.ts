@@ -111,7 +111,7 @@ export const generateOpenAIAudio = async (text: string): Promise<Buffer> => {
     voice: voices[randomIndex],
     input: text,
     instructions:
-      "Speak calmy. You are like a radio host telling a story calmly with music in the background.",
+      "Speak calmy with ocassional pauses. You are like a radio host telling a story calmly with music in the background.",
     response_format: "wav",
   });
 
