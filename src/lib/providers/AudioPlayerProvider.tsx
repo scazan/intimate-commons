@@ -194,7 +194,11 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!audio || playlist.length <= 1) return;
 
     const handleTrackEnd = () => {
-      nextTrack(); // Always advance to next track (will loop back to 0 if at end)
+      // Add random delay between 3-5 seconds before advancing to next track
+      const delay = Math.random() * 2000 + 3000; // Random between 3000-5000ms
+      setTimeout(() => {
+        nextTrack(); // Always advance to next track (will loop back to 0 if at end)
+      }, delay);
     };
 
     audio.addEventListener("ended", handleTrackEnd);

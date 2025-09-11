@@ -71,14 +71,21 @@ export const getUserStory = async (choiceProses: string[]) => {
     messages: [
       {
         role: "system",
-        content: `Given the facts about about this person, craft a very short story in which the user is living together with multiple other people. The story should be banal and be a picture of everyday life together. Trading is not the main focus of the story. Limit the story to no more than a paragraph.`,
+        // content: `Given the facts about about this person, craft a very short story in which the user is living together with multiple other people. The story should be banal and be a picture of everyday life together. Trading is not the main focus of the story. Limit the story to no more than a paragraph.`,,
+        content: `Given the facts about this person, craft a very short everyday story about living in a shared space with others. The story should capture a mundane, slice-of-life moment - perhaps a morning routine, an overheard conversation, someone's cooking mishap, or a small household negotiation. 
+
+Vary your sentence openings and rhythms. Include natural pauses by using shorter sentences mixed with longer ones. Add ellipses... or dashes—for organic breaks in thought. 
+
+The setting should feel warm and lived-in without explicitly using descriptive words like "cozy." Instead, convey comfort through specific details: worn furniture, familiar sounds, casual interactions.
+
+Keep it to one paragraph, focusing on a single ordinary moment rather than summarizing daily life. Trading or transactions should not be the focus.`,
       },
       {
         role: "user",
         content: `Facts: ${choiceProses.join("\n")}`,
       },
     ],
-    temperature: 0.7,
+    temperature: Math.random() * 0.3 + 1,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,

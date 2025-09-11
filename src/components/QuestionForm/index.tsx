@@ -254,7 +254,7 @@ export const QuestionForm = ({ choices, sessionId, className }: QuestionFormProp
               type="submit" 
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Next"}
+              {isSubmitting ? <LoadingCircle className="w-5 h-5" /> : "Next"}
             </Button>
           </div>
         </form>
